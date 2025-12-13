@@ -2,12 +2,15 @@ package com.example;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-// Tu jest już chyba wszystko gotowe do uruchomienia serwera
+// Tu jest już chyba wszystko gotowe do uruchomienia serwera, potem jesczze sprawdzę czy 
+// opłaca się robić playerId żeby rozróżniać graczy i żeby był doublelock
 public class SocketServer {
     private int port;
+    private CommandInterpreter commandInterpreter;
     private ClientThreadHandler clientThreadHandler = new ClientThreadHandler();
     public SocketServer(int port) {
         this.port = port;
+        this.commandInterpreter = new CommandInterpreter();
     }
     public void listen() {
 
@@ -15,9 +18,10 @@ public class SocketServer {
 
             System.out.println("Serwer działa na porcie: " + port);
             while (true) {
-                try (Socket gracz = serverSocket.accept()) {
+                try  {
+                    Socket gracz = serverSocket.accept();
                     System.out.println("Podłączono nowego gracza");
-                    ClientHandler clientHandler = new ClientHandler(gracz);
+                    ClientHandler clientHandler = new ClientHandler(gracz, commandInterpreter);
                     clientThreadHandler.handleClient(clientHandler);
                 }
                 catch (IOException e) {

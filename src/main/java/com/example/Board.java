@@ -15,7 +15,7 @@ public class Board implements Serializable {
     private void initializeBoard() {
         for (int i = 0; i < board_size; i++) {
             for (int j = 0; j < board_size; j++) {
-                board[i][j] = Stone.EMPTY;
+                board[i][j] = new Stone(StoneColor.EMPTY);
             }
         }
     }

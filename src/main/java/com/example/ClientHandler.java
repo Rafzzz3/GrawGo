@@ -7,24 +7,35 @@ import java.net.Socket;
 //
 public class ClientHandler implements Runnable {
     private Socket socket;
+    private Room currentRoom = null;
+    private RoomManager roomManager;
+    private Game game;
+    private ServerSender serverSender;
     private ObjectInputStream input;
     private ObjectOutputStream output;
-    private CommandInterpreter commandInterpreter;
-    public ClientHandler(Socket socket, CommandInterpreter commandInterpreter) {
+    private RoomCommandInterpreter roomCommandInterpreter;
+    private GameCommandInterpreter commandInterpreter;
+    public ClientHandler( Socket socket, RoomManager roomManager) {
         this.socket = socket;
-        this.commandInterpreter = commandInterpreter;
+        this.roomManager = roomManager;
+        this.commandInterpreter = new GameCommandInterpreter();
+        this.roomCommandInterpreter = new RoomCommandInterpreter(roomManager, this);
     }
     @Override
     public void run() {
         try {
-            output = new ObjectOutputStream(socket.getOutputStream());
+            this.serverSender = new ServerSender(new ObjectOutputStream(socket.getOutputStream()));
             input = new ObjectInputStream(socket.getInputStream());
+            serverSender.sendMessage("Witaj na serwerze. Dostępne komendy pokoju to: CREATE, LIST, JOIN.");
             while (!socket.isClosed()) {
                 String clientcommand = (String) input.readObject();
-                commandInterpreter.interpret(clientcommand);
-                String response = "Odpowiedź serwera: " + clientcommand;
-                output.writeObject(response);   
-                output.flush();
+                System.out.println("Otrzymano odpowiedź od gracza: " + clientcommand);
+                if (currentRoom == null) {
+                    roomCommandInterpreter.interpret(roomManager, this, clientcommand);
+                } else {
+                    game = currentRoom.getGame();
+                    commandInterpreter.interpret(game, clientcommand);
+                }
             }
         } catch (EOFException e) {
             System.out.println("Gracz rozłączył się.");
@@ -40,5 +51,11 @@ public class ClientHandler implements Runnable {
                 System.out.println("Błąd zamknięcia zasobów: " + e.getMessage());
             }
         }
+    }
+    public void setCurrentRoom(Room room) {
+        this.currentRoom = room;
+    }
+    public ServerSender getServerSender() {
+        return serverSender;
     }
 }

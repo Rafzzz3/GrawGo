@@ -7,6 +7,7 @@ public class Game {
     private Board board;
     private GameLogic logic;
     private int size;
+    private String response;
     // odkomentować kiedy zaimplementujemy GameState
     // private GameState state;
 
@@ -16,24 +17,29 @@ public class Game {
         this.size = size;
         // this.state = new GameState();
     }
-
-    // jeszcze nie wiem czy nie powinny throwowac wyjątków zamiast printa
+    // narazie implementujemy tylko makeMove potem poprawić
     public synchronized boolean makeMove(int x, int y, StoneColor color) {
         if (!logic.isValidPosition(size, x, y)) {
-            System.out.println("Nieprawidłowa pozycja!");
+            setMessage("Nieprawidłowa pozycja!");
             return false;
         }
         Stone stone = board.getStone(x, y);
         if (stone.getColor() != StoneColor.EMPTY) {
-            System.out.println("Pole już zajęte!");
+            setMessage("Pole już zajęte!");
             return false;
         }
         board.setStone(x, y, new Stone(color));
         if (logic.isSuffocated(board, x, y)) {
-            System.out.println("Ruch prowadzi do uduszenia kamienia!");
+            setMessage("Ruch prowadzi do uduszenia kamienia!");
             board.setStone(x, y, new Stone(StoneColor.EMPTY));
             return false;
         }
         return true;
+    }
+    public void setMessage(String message) {
+        this.response = message;
+    }
+    public String getMessage() {
+        return response;
     }
 }

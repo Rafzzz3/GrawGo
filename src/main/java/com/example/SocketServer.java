@@ -6,11 +6,11 @@ import java.net.Socket;
 // opłaca się robić playerId żeby rozróżniać graczy i żeby był doublelock
 public class SocketServer {
     private int port;
-    private CommandInterpreter commandInterpreter;
+    private RoomManager roomManager;
     private ClientThreadHandler clientThreadHandler = new ClientThreadHandler();
     public SocketServer(int port) {
         this.port = port;
-        this.commandInterpreter = new CommandInterpreter();
+        this.roomManager = new RoomManager();
     }
     public void listen() {
 
@@ -21,7 +21,7 @@ public class SocketServer {
                 try  {
                     Socket gracz = serverSocket.accept();
                     System.out.println("Podłączono nowego gracza");
-                    ClientHandler clientHandler = new ClientHandler(gracz, commandInterpreter);
+                    ClientHandler clientHandler = new ClientHandler( gracz,  roomManager);
                     clientThreadHandler.handleClient(clientHandler);
                 }
                 catch (IOException e) {

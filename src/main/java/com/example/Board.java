@@ -4,33 +4,33 @@ import java.io.Serializable;
 // ten Serializable jest potrzebny żebyśmy mogli wysłać planszę do Klient receivera który wyświetli planszę
 public class Board implements Serializable {
     private int board_size;
-    private Stone[][] board;
+    private Stone[][] table;
 
     public Board(int size) {
         this.board_size = size;
-        board = new Stone[board_size][board_size];
+        table = new Stone[board_size][board_size];
         initializeBoard();
     }
 
     private void initializeBoard() {
         for (int i = 0; i < board_size; i++) {
             for (int j = 0; j < board_size; j++) {
-                board[i][j] = new Stone(StoneColor.EMPTY);
+                table[i][j] = Stone.EMPTY;
             }
         }
     }
 
     public Stone getStone(int row, int col) {
-        return board[row][col];
+        return table[row][col];
     }
 
     public void setStone(int row, int col, Stone stone) {
-        board[row][col] = stone;
+        table[row][col] = stone;
     }
     public int getBoardSize() {
         return board_size;
     }
-    public Stone[][] getBoard() {
-        return board;
+    public Stone[][] getTable() {
+        return table;
     }
 }

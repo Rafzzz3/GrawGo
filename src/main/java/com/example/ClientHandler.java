@@ -35,6 +35,10 @@ public class ClientHandler implements Runnable {
                 } else {
                     game = currentRoom.getGame();
                     commandInterpreter.interpret(game, clientcommand);
+                    // odeślij wynik ostatniej komendy gry do klienta
+                    if (game != null) {
+                        serverSender.sendMessage(game.getMessage());
+                    }
                 }
             }
         } catch (EOFException e) {

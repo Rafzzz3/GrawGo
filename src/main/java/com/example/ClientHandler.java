@@ -44,6 +44,9 @@ public class ClientHandler implements Runnable {
                     // odeślij wynik ostatniej komendy gry do klienta
                     if (game != null) {
                         serverSender.sendMessage(game.getMessage());
+                        for (ClientHandler player : currentRoom.getPlayers()) {
+                            player.getServerSender().sendMessage(game.renderBoard());
+                        }
                     }
                 }
             }

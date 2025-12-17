@@ -12,9 +12,9 @@ public class Room {
     private Stone firstSeatColor;
     private final Random random = new Random();
 
-    public Room(int id) {
+    public Room(int id, int size) {
         this.id = id;
-        this.game = new Game(19);
+        this.game = new Game(size);
     }
 
     public void addPlayer(ClientHandler player) {

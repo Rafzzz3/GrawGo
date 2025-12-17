@@ -9,10 +9,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RoomManager {
     private Map<Integer, Room> rooms = new ConcurrentHashMap<>();
     private int currentRoomId  = 1;
-    public Room createRoom() {
+    public Room createRoom(int size) {
         int roomId =  currentRoomId;
         currentRoomId++;
-        Room newRoom = new Room(roomId);
+        Room newRoom = new Room(roomId, size);
         rooms.put(roomId, newRoom);
         return newRoom;
     }

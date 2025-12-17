@@ -43,4 +43,60 @@ public class Game {
     public GameState getWhiteState() { return whiteState; }
     public Board getBoard() { return board; }
     public GameLogic getLogic() { return logic; }
+
+    // Plansza Go w Unicode: ● (czarny), ○ (biały), linie ┌┬┐ ├┼┤ └┴┘
+    public String renderBoard() {
+        Board board = getBoard();
+        int size = board.getBoardSize();
+        StringBuilder sb = new StringBuilder();
+
+        // Nagłówek kolumn (1..size)
+        sb.append("   ");
+        for (int i = 0; i < size; i++) {
+            sb.append(String.format("%-3d", (i + 1)));
+        }
+        sb.append('\n');
+
+        for (int y = 0; y < size; y++) {
+            // Numer wiersza z lewej (1..size)
+            sb.append(String.format("%2d ", (y + 1)));
+
+            // Linia z przecięciami i poziomymi łącznikami
+            for (int x = 0; x < size; x++) {
+                Stone stone = board.getStone(x, y);
+                String symbol;
+
+                if (stone == Stone.BLACK) {
+                    symbol = "●";
+                } else if (stone == Stone.WHITE) {
+                    symbol = "○";
+                } else {
+                    if (x == 0 && y == 0) symbol = "┌";
+                    else if (x == size - 1 && y == 0) symbol = "┐";
+                    else if (x == 0 && y == size - 1) symbol = "└";
+                    else if (x == size - 1 && y == size - 1) symbol = "┘";
+                    else if (y == 0) symbol = "┬";
+                    else if (y == size - 1) symbol = "┴";
+                    else if (x == 0) symbol = "├";
+                    else if (x == size - 1) symbol = "┤";
+                    else symbol = "┼";
+                }
+
+                sb.append(symbol);
+                if (x < size - 1) sb.append("──");
+            }
+            sb.append('\n');
+
+            // Pionowe łączniki między wierszami
+            if (y < size - 1) {
+                sb.append("   ");
+                for (int x = 0; x < size; x++) {
+                    sb.append('│');
+                    if (x < size - 1) sb.append("  ");
+                }
+                sb.append('\n');
+            }
+        }
+        return sb.toString();
+    }
 }

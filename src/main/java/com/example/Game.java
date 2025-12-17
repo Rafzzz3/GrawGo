@@ -25,8 +25,25 @@ public class Game {
     public synchronized boolean putStone(int x, int y) {
         return currentState.stateMove(this, x, y);
     }
-
-
+    public synchronized boolean isTurn(Stone color) {
+        if (color == null) {
+            return false;
+        }
+        if (currentState == blackState && color == Stone.BLACK) {
+            return true;
+        }
+        if (currentState == whiteState && color == Stone.WHITE) {
+            return true;
+        }
+        return false;
+    }
+    public synchronized void switchTurn() {
+        if (currentState == blackState) {
+            currentState = whiteState;
+        } else {
+            currentState = blackState;
+        }
+    }
     public void setMessage(String message) { this.response = message; }
     public String getMessage() { return response; }
     public void setState(GameState newState) {

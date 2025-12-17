@@ -14,6 +14,12 @@ public class Room {
     }
     public void addPlayer(ClientHandler player) {
         if (players.size() < 2) {
+            if (players.size() == 0) {
+                player.setPlayerColor(Stone.BLACK);
+            }
+            else {
+                player.setPlayerColor(Stone.WHITE);
+            }
             players.add(player);
         }
         else {

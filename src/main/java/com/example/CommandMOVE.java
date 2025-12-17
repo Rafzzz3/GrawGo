@@ -3,9 +3,9 @@ package com.example;
 public class CommandMOVE implements CommandInterfaceExecutor {
 
     @Override
-    public void execute(Game game, String args) {
+    public void execute(Game game, String args, ClientHandler gracz) {
         String[] parts = args.split(" ");
-        if (parts.length != 3) {
+        if (parts.length != 2) {
             System.out.println("Nieprawidłowa liczba argumentów dla komendy MOVE.");
             return;
         }

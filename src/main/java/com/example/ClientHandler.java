@@ -9,6 +9,7 @@ public class ClientHandler implements Runnable {
     private Socket socket;
     private Room currentRoom = null;
     private boolean ready = false;
+    private Stone playerColor;
     private RoomManager roomManager;
     private Game game;
     private ServerSender serverSender;
@@ -35,7 +36,11 @@ public class ClientHandler implements Runnable {
                     roomCommandInterpreter.interpret(roomManager, this, clientcommand);
                 } else if (currentRoom.isGameStarted()) {
                     game = currentRoom.getGame();
-                    commandInterpreter.interpret(game, clientcommand);
+                    if (!game.isTurn(getPlayerColor())) {
+                        serverSender.sendMessage("Nie twoja tura. Czekaj na ruch przeciwnika.");
+                        continue;
+                    }
+                    commandInterpreter.interpret(game, clientcommand, this);
                     // odeślij wynik ostatniej komendy gry do klienta
                     if (game != null) {
                         serverSender.sendMessage(game.getMessage());
@@ -72,5 +77,10 @@ public class ClientHandler implements Runnable {
     public ServerSender getServerSender() {
         return serverSender;
     }
-    
+    public void setPlayerColor(Stone color) {
+        this.playerColor = color;
+    }
+    public Stone getPlayerColor() {
+        return this.playerColor;
+    }
 }

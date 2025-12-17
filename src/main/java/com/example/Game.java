@@ -71,15 +71,15 @@ public class Game {
                 } else if (stone == Stone.WHITE) {
                     symbol = "○";
                 } else {
-                    if (x == 0 && y == 0) symbol = "┌";
-                    else if (x == size - 1 && y == 0) symbol = "┐";
-                    else if (x == 0 && y == size - 1) symbol = "└";
-                    else if (x == size - 1 && y == size - 1) symbol = "┘";
-                    else if (y == 0) symbol = "┬";
-                    else if (y == size - 1) symbol = "┴";
-                    else if (x == 0) symbol = "├";
-                    else if (x == size - 1) symbol = "┤";
-                    else symbol = "┼";
+                    if (x == 0 && y == 0) symbol = "┌"; // lewy gorny rog
+                    else if (x == size - 1 && y == 0) symbol = "┐"; // prawy gorny rog
+                    else if (x == 0 && y == size - 1) symbol = "└"; // lewy dolny rog
+                    else if (x == size - 1 && y == size - 1) symbol = "┘"; // prawy dolny rog
+                    else if (y == 0) symbol = "┬";  //gorna krawedz
+                    else if (y == size - 1) symbol = "┴";   // dolna krawedz
+                    else if (x == 0) symbol = "├";  // lewa krawedz
+                    else if (x == size - 1) symbol = "┤";   // prawa krawaedz
+                    else symbol = "┼";  // srodek
                 }
 
                 sb.append(symbol);

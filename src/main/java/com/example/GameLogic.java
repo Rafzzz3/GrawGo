@@ -68,7 +68,7 @@ public class GameLogic {
                     } else {
                         whitePoints++;
                     }
-                    capturedList.add(new int[]{newX, newY});
+                    capturedList.add(new int[]{newX+1, newY+1}); // +1 dla uzytkownika
                 }
             }
         }

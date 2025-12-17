@@ -13,7 +13,8 @@ public class ClientReceiver implements Runnable {
         while (true) {
             try {
                 Object message = input.readObject();
-                System.out.println("SERWER: " + message);
+                System.out.println("SERWER:");
+                System.out.println(message);
                 System.out.flush();
             } catch (IOException | ClassNotFoundException e) {
                 System.out.println("Rozłaczono z serwerem lub wystąpił błąd: " + e.getMessage());

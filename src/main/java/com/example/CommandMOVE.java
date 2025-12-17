@@ -13,7 +13,6 @@ public class CommandMOVE implements CommandInterfaceExecutor {
             int x = Integer.parseInt(parts[0]);
             int y = Integer.parseInt(parts[1]);
             Stone color = Stone.valueOf(parts[2].toUpperCase());
-
             boolean success = game.putStone(color, x, y);
             System.out.println(game.getMessage());
         } catch (NumberFormatException e) {

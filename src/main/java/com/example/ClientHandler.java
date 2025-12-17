@@ -8,7 +8,6 @@ import java.net.Socket;
 public class ClientHandler implements Runnable {
     private Socket socket;
     private Room currentRoom = null;
-    private boolean ready = false;
     private Stone playerColor;
     private RoomManager roomManager;
     private Game game;
@@ -71,12 +70,7 @@ public class ClientHandler implements Runnable {
     public Room getCurrentRoom() {
         return currentRoom;
     }
-    public void setReady(boolean ready) {
-        this.ready = ready;
-    }
-    public boolean isReady() {
-        return ready;
-    }
+
     public ServerSender getServerSender() {
         return serverSender;
     }

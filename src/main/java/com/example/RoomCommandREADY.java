@@ -8,9 +8,8 @@ public class RoomCommandREADY implements RoomCommandInterfaceExecutor {
             gracz.getServerSender().sendMessage("Nie jesteś w żadnym pokoju.");
             return;
         }
-        gracz.setReady(true);
+        room.incrementReadyCounter();
         gracz.getServerSender().sendMessage("Gotowy do gry.");
-        room.setGameStarted();
         if (room.isGameStarted()) {
             for (ClientHandler player : room.getPlayers()) {
                 player.getServerSender().sendMessage("Wszyscy gracze są gotowi. Gra się rozpoczyna!");

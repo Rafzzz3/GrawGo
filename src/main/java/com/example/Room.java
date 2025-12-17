@@ -18,29 +18,25 @@ public class Room {
     }
 
     public void addPlayer(ClientHandler player) {
-        if (players.size() < 2) {
-            if (players.size() == 0) {
-                // losuj kolor dla pierwszego gracza
-                boolean blackFirst = random.nextBoolean();
-                if (blackFirst) {
-                    player.setPlayerColor(Stone.BLACK);
-                    firstSeatColor = Stone.BLACK;
-                } else {
-                    player.setPlayerColor(Stone.WHITE);
-                    firstSeatColor = Stone.WHITE;
-                }
+        if (players.size() == 0) {
+            // losuj kolor dla pierwszego gracza
+            boolean blackFirst = random.nextBoolean();
+            if (blackFirst) {
+                player.setPlayerColor(Stone.BLACK);
+                firstSeatColor = Stone.BLACK;
             } else {
-                // drugi gracz dostaje przeciwny kolor
-                if (firstSeatColor == Stone.BLACK) {
-                    player.setPlayerColor(Stone.WHITE);
-                } else {
-                    player.setPlayerColor(Stone.BLACK);
-                }
+                player.setPlayerColor(Stone.WHITE);
+                firstSeatColor = Stone.WHITE;
             }
-            players.add(player);
         } else {
-            System.out.println("Pokój pełny, nie można dodać więcej graczy.");
+            // drugi gracz dostaje przeciwny kolor
+            if (firstSeatColor == Stone.BLACK) {
+                player.setPlayerColor(Stone.WHITE);
+            } else {
+                player.setPlayerColor(Stone.BLACK);
+            }
         }
+        players.add(player);
     }
 
     public int getId() {

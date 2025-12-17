@@ -12,9 +12,8 @@ public class CommandMOVE implements CommandInterfaceExecutor {
         try {
             int x = Integer.parseInt(parts[0]);
             int y = Integer.parseInt(parts[1]);
-            Stone color = Stone.valueOf(parts[2].toUpperCase());
 
-            boolean success = game.putStone(color, x, y);
+            boolean success = game.putStone(x, y);
             System.out.println(game.getMessage());
         } catch (NumberFormatException e) {
             System.out.println("Nieprawidłowe współrzędne. Użyj liczb całkowitych.");

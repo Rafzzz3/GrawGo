@@ -22,8 +22,8 @@ public class Game {
     }
 
     // Punkt wjescia z zewnatrz
-    public synchronized boolean putStone(Stone color, int x, int y) {
-        return currentState.stateMove(this, color, x, y);
+    public synchronized boolean putStone(int x, int y) {
+        return currentState.stateMove(this, x, y);
     }
 
 

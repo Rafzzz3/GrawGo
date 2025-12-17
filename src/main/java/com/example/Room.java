@@ -7,6 +7,7 @@ public class Room {
     private int id;
     private Game game;
     private List<ClientHandler> players = new ArrayList<>();
+    private boolean gameStarted = false;
     public Room(int id) {
         this.id = id;
         this.game = new Game(19);
@@ -27,5 +28,19 @@ public class Room {
     }
     public Game getGame() {
         return game;
+    }
+    public boolean isGameStarted() {
+        return gameStarted;
+    }
+    public void setGameStarted() {
+        for (ClientHandler player : players) {
+            if (!player.isReady()) {
+                return;
+            }
+        }
+        gameStarted = true;
+    }
+    public List<ClientHandler> getPlayers() {
+        return players;
     }
 }

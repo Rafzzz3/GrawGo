@@ -8,6 +8,7 @@ import java.net.Socket;
 public class ClientHandler implements Runnable {
     private Socket socket;
     private Room currentRoom = null;
+    private boolean ready = false;
     private RoomManager roomManager;
     private Game game;
     private ServerSender serverSender;
@@ -30,9 +31,9 @@ public class ClientHandler implements Runnable {
             while (!socket.isClosed()) {
                 String clientcommand = (String) input.readObject();
                 System.out.println("Otrzymano odpowiedź od gracza: " + clientcommand);
-                if (currentRoom == null) {
+                if (currentRoom == null || !currentRoom.isGameStarted()) {
                     roomCommandInterpreter.interpret(roomManager, this, clientcommand);
-                } else {
+                } else if (currentRoom.isGameStarted()) {
                     game = currentRoom.getGame();
                     commandInterpreter.interpret(game, clientcommand);
                     // odeślij wynik ostatniej komendy gry do klienta
@@ -59,7 +60,17 @@ public class ClientHandler implements Runnable {
     public void setCurrentRoom(Room room) {
         this.currentRoom = room;
     }
+    public Room getCurrentRoom() {
+        return currentRoom;
+    }
+    public void setReady(boolean ready) {
+        this.ready = ready;
+    }
+    public boolean isReady() {
+        return ready;
+    }
     public ServerSender getServerSender() {
         return serverSender;
     }
+    
 }

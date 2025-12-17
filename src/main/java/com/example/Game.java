@@ -1,7 +1,6 @@
 package com.example;
 
-// TO-DO: zaimplementowac GameState
-// Klasa to wzorzec projektowy Facade i moze (agreguje GameLogic i Board oraz GameState - trzeba zaimplementować)
+// Klasa to wzorzec projektowy Facade i moze (agreguje GameLogic i Board oraz GameState)
 public class Game {
     private Board board;
     private GameLogic logic;
@@ -9,9 +8,6 @@ public class Game {
     private final GameState blackState;
     private final GameState whiteState;
     private GameState currentState;
-
-    // odkomentować kiedy zaimplementujemy GameState
-    // private GameState state;
 
     public Game(int size) {
         this.board = new Board(size);
@@ -37,13 +33,7 @@ public class Game {
         }
         return false;
     }
-    public synchronized void switchTurn() {
-        if (currentState == blackState) {
-            currentState = whiteState;
-        } else {
-            currentState = blackState;
-        }
-    }
+
     public void setMessage(String message) { this.response = message; }
     public String getMessage() { return response; }
     public void setState(GameState newState) {

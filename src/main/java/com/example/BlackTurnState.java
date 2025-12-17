@@ -1,8 +1,14 @@
 package com.example;
 
 public class BlackTurnState extends Turn implements GameState {
+    Stone turnColor = Stone.BLACK;
+
     @Override
-    public boolean stateMove(Game game, int x, int y) {
+    public boolean stateMove(Game game,Stone color, int x, int y) {
+        if (color != turnColor) {
+            game.setMessage("Obecnie tura czarnych.");
+            return false;
+        }
         // Próbujemy postawić CZARNY
         boolean result = internalMove(game, x, y, Stone.BLACK);
         

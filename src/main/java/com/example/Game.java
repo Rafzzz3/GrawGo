@@ -5,7 +5,6 @@ package com.example;
 public class Game {
     private Board board;
     private GameLogic logic;
-    private int size;
     private String response;
 
     // odkomentować kiedy zaimplementujemy GameState
@@ -14,47 +13,30 @@ public class Game {
     public Game(int size) {
         this.board = new Board(size);
         this.logic = new GameLogic();
-        this.size = size;
-        // this.state = new GameState();
     }
 
     public synchronized boolean makeMove(int x, int y, Stone color) {
-        if (!logic.isValidPosition(size, x, y)) {
-            setMessage("Nieprawidłowa pozycja!");
-            return false;
-        }
-        Stone stone = board.getStone(x, y);
-        if (stone != Stone.EMPTY) {
-            setMessage("Pole już zajęte!");
-            return false;
-        }
+        MoveResult r = logic.move(board, x, y, color);
 
-        int[][] captured = logic.makeMove(board, x, y, color);
-        if (captured.length == 0 && logic.isSuffocated(board, x, y)) {
-            board.setStone(x, y, Stone.EMPTY);
-            setMessage("Ruch niedozwolony: Samobójstwo!");
-            return false;
+        switch (r.code) {
+            case OK:
+                setMessage(r.message);
+                return true;
+            case INVALID_POSITION:
+                setMessage("Nieprawidłowa pozycja!");
+                return false;
+            case OCCUPIED:
+                setMessage("Pole już zajęte!");
+                return false;
+            case SUICIDE:
+                setMessage("Ruch niedozwolony: Samobójstwo!");
+                return false;
+            default:
+                setMessage("Nieznany błąd.");
+                return false;
         }
-
-        if (captured.length > 0) {
-            StringBuilder sb = new StringBuilder("Uduszono: ");
-            for (int i = 0; i < captured.length; i++) {
-                int[] p = captured[i];
-                sb.append("(").append(p[0]).append(", ").append(p[1]).append(")").append(", ");
-            }
-            sb.setLength(sb.length() - 2); // usuwa ostatni przecinek i spację
-            setMessage(sb.toString());
-        } else {
-            setMessage("Ruch wykonany pomyślnie.");
-        }
-
-        return true;
     }
 
-    public void setMessage(String message) {
-        this.response = message;
-    }
-    public String getMessage() {
-        return response;
-    }
+    public void setMessage(String message) { this.response = message; }
+    public String getMessage() { return response; }
 }

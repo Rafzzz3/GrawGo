@@ -49,7 +49,7 @@ public class GameLogic {
         return false; 
     }
 
-    public int[][] makeMove(Board board, int x, int y, Stone color) {
+    private int[][] makeMove(Board board, int x, int y, Stone color) {
         board.setStone(x, y, color);
         List<int[]> capturedList = new ArrayList<>();
 
@@ -76,6 +76,42 @@ public class GameLogic {
         return capturedList.toArray(new int[0][]);
     }
     
+
+
+    // Główny punkt wejścia: walidacja, ruch, rollback przy samobójstwie
+    public MoveResult move(Board board, int x, int y, Stone color) {
+        int size = board.getBoardSize();
+        if (!isValidPosition(size, x, y)) {
+            return new MoveResult(MoveCode.INVALID_POSITION, new int[0][], "Nieprawidłowa pozycja!");
+        }
+        if (board.getStone(x, y) != Stone.EMPTY) {
+            return new MoveResult(MoveCode.OCCUPIED, new int[0][], "Pole już zajęte!");
+        }
+
+        int[][] captured = makeMove(board, x, y, color);
+
+        if (captured.length == 0 && isSuffocated(board, x, y)) {
+            board.setStone(x, y, Stone.EMPTY); // rollback
+            return new MoveResult(MoveCode.SUICIDE, new int[0][], "Ruch niedozwolony: Samobójstwo!");
+        }
+
+        String msg;
+        if (captured.length > 0) {
+            StringBuilder sb = new StringBuilder("Uduszono: ");
+            for (int i = 0; i < captured.length; i++) {
+                int[] p = captured[i];
+                sb.append("(").append(p[0]).append(", ").append(p[1]).append(")");
+                if (i < captured.length - 1) sb.append(", ");
+            }
+            msg = sb.toString();
+        } else {
+            msg = "Ruch wykonany pomyślnie.";
+        }
+
+        return new MoveResult(MoveCode.OK, captured, msg);
+    }
+
+
     // Helper też musi wiedzieć jaki jest rozmiar
     public boolean isValidPosition(int size, int x, int y) {
         return x >= 0 && x < size && y >= 0 && y < size;
@@ -88,5 +124,4 @@ public class GameLogic {
     public int getWhitePoints() {
         return whitePoints;
     }
-
 }

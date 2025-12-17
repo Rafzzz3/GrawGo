@@ -1,6 +1,7 @@
 package com.example;
 
 public class WhiteTurnState extends Turn implements GameState {
+    // dla bezpieczeństwa
     Stone turnColor = Stone.WHITE;
 
     @Override

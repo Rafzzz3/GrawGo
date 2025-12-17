@@ -9,7 +9,7 @@ public class GameCommandInterpreter {
     }
     public void interpret(Game game, String message, ClientHandler gracz) {
         String[] commandsMessage = message.trim().split(" ", 2);
-        String commandName = commandsMessage[0];
+        String commandName = commandsMessage[0].toUpperCase();
         String args = ""; 
         if (commandsMessage.length > 1) {
             args = commandsMessage[1]; 

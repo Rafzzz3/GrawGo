@@ -3,10 +3,10 @@ package com.example;
 public class CommandMOVE implements CommandInterfaceExecutor {
 
     @Override
-    public void execute(Game game, String args, ClientHandler gracz) {
+    public void execute(Game game, String args, ClientHandler player) {
         String[] parts = args.trim().split("\\s+");
         if (parts.length != 2) {
-            System.out.println("Nieprawidłowa liczba argumentów dla komendy MOVE.");
+            game.setMessage("Nieprawidłowa liczba argumentów dla komendy MOVE.");
             return;
         }
         try {
@@ -16,13 +16,11 @@ public class CommandMOVE implements CommandInterfaceExecutor {
             // konwersja na 0-based dla logiki gry
             int x = ux - 1;
             int y = uy - 1;
-
-            boolean success = game.putStone(x, y);
-            System.out.println(game.getMessage());
+            game.putStone(x, y);
         } catch (NumberFormatException e) {
-            System.out.println("Nieprawidłowe współrzędne. Użyj liczb całkowitych.");
+            game.setMessage("Nieprawidłowe współrzędne. Użyj liczb całkowitych.");
         } catch (IllegalArgumentException e) {
-            System.out.println("Nieprawidłowy kolor kamienia. Dostępne kolory: BLACK, WHITE.");
+            game.setMessage("Nieprawidłowe współrzędne. Spróbuj ponownie.");
         }
     }
 }

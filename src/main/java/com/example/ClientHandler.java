@@ -13,7 +13,6 @@ public class ClientHandler implements Runnable {
     private Game game;
     private ServerSender serverSender;
     private ObjectInputStream input;
-    private ObjectOutputStream output;
     private RoomCommandInterpreter roomCommandInterpreter;
     private GameCommandInterpreter commandInterpreter;
     public ClientHandler( Socket socket, RoomManager roomManager) {
@@ -42,7 +41,10 @@ public class ClientHandler implements Runnable {
                     commandInterpreter.interpret(game, clientcommand, this);
                     // odeślij wynik ostatniej komendy gry do klienta
                     if (game != null) {
-                        serverSender.sendMessage(game.getMessage());
+                        String message = game.getMessage();
+                        if (message != null && !message.isEmpty()) {
+                            serverSender.sendMessage(message);
+                        }
                         for (ClientHandler player : currentRoom.getPlayers()) {
                             player.getServerSender().sendMessage(game.renderBoard());
                         }

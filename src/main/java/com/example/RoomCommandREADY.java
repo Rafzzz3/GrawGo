@@ -2,17 +2,17 @@ package com.example;
 
 public class RoomCommandREADY implements RoomCommandInterfaceExecutor {
     @Override
-    public void execute(ClientHandler gracz, RoomManager roomManager, String args) {
-        Room room = gracz.getCurrentRoom();
+    public void execute(ClientHandler player, RoomManager roomManager, String args) {
+        Room room = player.getCurrentRoom();
         if (room == null) {
-            gracz.getServerSender().sendMessage("Nie jesteś w żadnym pokoju.");
+            player.getServerSender().sendMessage("Nie jesteś w żadnym pokoju.");
             return;
         }
         room.incrementReadyCounter();
-        gracz.getServerSender().sendMessage("Gotowy do gry.");
+        player.getServerSender().sendMessage("Gotowy do gry.");
         if (room.isGameStarted()) {
-            for (ClientHandler player : room.getPlayers()) {
-                player.getServerSender().sendMessage("Wszyscy gracze są gotowi. Gra się rozpoczyna!");
+            for (ClientHandler gracz : room.getPlayers()) {
+                gracz.getServerSender().sendMessage("Wszyscy gracze są gotowi. Gra się rozpoczyna!");
             }
         }
     }

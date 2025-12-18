@@ -2,7 +2,7 @@ package com.example;
 
 public class RoomCommandJOIN implements RoomCommandInterfaceExecutor {
     @Override
-    public void execute(ClientHandler gracz, RoomManager roomManager, String args) {
+    public void execute(ClientHandler player, RoomManager roomManager, String args) {
         try {
             Room room = roomManager.findRoom(Integer.parseInt(args));
             String message;
@@ -14,13 +14,18 @@ public class RoomCommandJOIN implements RoomCommandInterfaceExecutor {
             }
             else {
                 message = "Dołączyłeś do pokoju: " + room.getId();
-                gracz.setCurrentRoom(room);
-                room.addPlayer(gracz);
+                player.setCurrentRoom(room);
+                room.addPlayer(player);
+                if (player.getPlayerColor() == Stone.BLACK) {
+                    message += "\nMasz czarny kolor. Zaczynasz grę.";
+                } else {
+                    message += "\nMasz biały kolor. Drugi gracz zaczyna grę.";
+                }
             }
-            gracz.getServerSender().sendMessage(message);
+            player.getServerSender().sendMessage(message);
         }
         catch (Exception e) {
-            System.out.println("Nie udało się dołączyć do pokoju: " + e.getMessage());
+            player.getServerSender().sendMessage("Nie udało się dołączyć do pokoju: " + e.getMessage());
         }
     }
     

@@ -6,7 +6,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 public class GuiLobbyView {
     private Scene scene;
-    private TextArea chatArea;
+    private TextArea infoArea;
     private SocketClient socketClient;
     public GuiLobbyView(SocketClient socketClient) {
         this.socketClient = socketClient;
@@ -14,10 +14,10 @@ public class GuiLobbyView {
         layoutBox.setPadding(new Insets(10));
         Label titleLabel = new Label("Lobby gry");
         titleLabel.setStyle("-fx-font-size: 30px; -fx-font-weight: bold;");
-        chatArea = new TextArea();
-        chatArea.setEditable(false);
-        chatArea.setPrefHeight(400);
-        chatArea.setText("Oczekiwanie na połączenie");
+        infoArea = new TextArea();
+        infoArea.setEditable(false);
+        infoArea.setPrefHeight(400);
+        infoArea.setText("Oczekiwanie na połączenie");
         HBox buttonBox = new HBox(10);
         TextField inputField = new TextField("Numer pokoju");
         Button sendButton = new Button("Send");
@@ -25,10 +25,13 @@ public class GuiLobbyView {
         Button joinButton = new Button("Join Room");
         Button readyButton = new Button("Ready");
         buttonBox.getChildren().addAll(inputField, sendButton, createButton, joinButton, readyButton);
-        layoutBox.getChildren().addAll(titleLabel, chatArea, buttonBox);
+        layoutBox.getChildren().addAll(titleLabel, infoArea, buttonBox);
         scene = new Scene(layoutBox, 400, 500); 
     }
     public Scene getScene() {
         return scene;
+    }
+    public void setMessage(String message) {
+        infoArea.appendText("\n" + message);
     }
 }

@@ -3,11 +3,15 @@ import java.net.Socket;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-public class GameApp extends Application {
+public class GameApp extends Application implements GuiListner {
     private Stage mainStage;
     private GuiLobbyView lobbyView;
     private GuiBoardView boardView;
     private SocketClient socketClient;
+    private boolean gameStarted = false;
+    private static void main(String[] args) {
+        launch(args);
+    }
     @Override
     public void start(Stage mainStage) {
         this.socketClient = new SocketClient();
@@ -28,5 +32,23 @@ public class GameApp extends Application {
         });
         mainStage.show();
     }
-
+    @Override
+    public void forMessage(String message) {
+        if (gameStarted) {
+            boardView.setMessage(message);
+            return;
+        }
+        else {
+            lobbyView.setMessage(message);
+        }
+    }
+    @Override
+    public void forBoard(Board board) {
+        if (!gameStarted) {
+            gameStarted = true;
+            mainStage.setScene(boardView.getScene());
+            mainStage.sizeToScene();
+        }
+        // Tu trzeba jeszcze wysłać board do boardView żeby aktualizować wygląd boarda;
+    }
 }

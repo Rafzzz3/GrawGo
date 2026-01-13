@@ -1,7 +1,7 @@
 package com.example;
 import java.util.HashMap;
 import java.util.Map;
-// TO DO - zaimplementować komendy i dodać je do mapy commandList
+
 public class GameCommandInterpreter {
     private Map<String, CommandInterfaceExecutor> commandList = new HashMap<>();
     public GameCommandInterpreter() {

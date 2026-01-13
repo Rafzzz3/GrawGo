@@ -18,6 +18,9 @@ public class Turn {
             case SUICIDE:
                 game.setMessage(r.message); // "Ruch niedozwolony: Samobójstwo!"
                 return false;
+            case KO:
+                game.setMessage(r.message); // "Ruch niedozwolony: zasada KO!"
+                return false;
             default:
                 game.setMessage("Nieznany błąd.");
                 return false;

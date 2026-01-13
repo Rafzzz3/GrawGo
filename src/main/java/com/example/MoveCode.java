@@ -4,5 +4,6 @@ public enum MoveCode {
     OK,
     INVALID_POSITION,
     OCCUPIED,
-    SUICIDE
+    SUICIDE,
+    KO
 }

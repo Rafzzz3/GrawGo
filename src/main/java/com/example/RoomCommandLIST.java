@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class RoomCommandLIST implements RoomCommandInterfaceExecutor {
     @Override
-    public void execute(ClientHandler gracz, RoomManager roomManager, String args) {
+    public void execute(ClientHandler player, RoomManager roomManager, String args) {
         ArrayList<Room> rooms = roomManager.getRoomList();
         
         StringBuilder roomList = new StringBuilder("Dostępne pokoje:\n");
@@ -13,7 +13,7 @@ public class RoomCommandLIST implements RoomCommandInterfaceExecutor {
                     .append(", Gracze: ").append(room.getPlayerCount()).append("\n");
         }
 
-        gracz.getServerSender().sendMessage(roomList.toString());
+        player.getServerSender().sendMessage(roomList.toString());
     }
 
 }

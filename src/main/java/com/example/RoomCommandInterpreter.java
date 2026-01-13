@@ -5,13 +5,13 @@ import java.util.Map;
 
 public class RoomCommandInterpreter {
     private Map<String, RoomCommandInterfaceExecutor> commands = new HashMap<>();
-    public RoomCommandInterpreter(RoomManager roomManager, ClientHandler gracz) {
+    public RoomCommandInterpreter(RoomManager roomManager, ClientHandler player) {
         commands.put("CREATE", new RoomCommandCREATE());
         commands.put("LIST", new RoomCommandLIST());
         commands.put("JOIN", new RoomCommandJOIN());
         commands.put("READY", new RoomCommandREADY());
     }
-    public void interpret(RoomManager roomManager, ClientHandler gracz, String message) {
+    public void interpret(RoomManager roomManager, ClientHandler player, String message) {
         String[] commandMessage = message.trim().split(" ", 2);
         String commandName = commandMessage[0].trim().toUpperCase();
         String args = "";
@@ -20,9 +20,9 @@ public class RoomCommandInterpreter {
         }
         RoomCommandInterfaceExecutor commandExecutor = commands.get(commandName);
         if (commandExecutor != null) {
-            commandExecutor.execute(gracz, roomManager, args);
+            commandExecutor.execute(player, roomManager, args);
         } else {
-            gracz.getServerSender().sendMessage("Nieznana komenda pokoju: " + commandName);
+            player.getServerSender().sendMessage("Nieznana komenda pokoju: " + commandName);
         }
     }
 }

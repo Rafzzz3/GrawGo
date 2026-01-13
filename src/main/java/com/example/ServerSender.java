@@ -15,4 +15,15 @@ public class ServerSender {
             e.printStackTrace();
         }
     }
+    // Do wysyłania obiektów, np. boarda
+    public synchronized void sendObject(Object obj) {
+        try {
+            output.writeObject(obj);
+            output.reset();
+            output.flush();
+        } catch (IOException e) {
+            System.err.println("Błąd podczas wysyłania obiektu do klienta: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 }

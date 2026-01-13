@@ -7,7 +7,7 @@ public class GameCommandInterpreter {
     public GameCommandInterpreter() {
         commandList.put("MOVE", new CommandMOVE());
     }
-    public void interpret(Game game, String message, ClientHandler gracz) {
+    public void interpret(Game game, String message, ClientHandler player) {
         String[] commandsMessage = message.trim().split(" ", 2);
         String commandName = commandsMessage[0].toUpperCase();
         String args = ""; 
@@ -16,7 +16,7 @@ public class GameCommandInterpreter {
         }
         CommandInterfaceExecutor command = commandList.get(commandName);
         if (command != null) {
-            command.execute(game,args,gracz);
+            command.execute(game,args,player);
         } else {
             System.out.println("Nieznana komenda: " + commandName);
         }

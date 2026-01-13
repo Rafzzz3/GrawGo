@@ -1,5 +1,5 @@
 package com.example;
 
 public interface RoomCommandInterfaceExecutor {
-    void execute(ClientHandler gracz, RoomManager roomManager, String args);
+    void execute(ClientHandler player, RoomManager roomManager, String args);
 }

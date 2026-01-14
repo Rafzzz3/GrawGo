@@ -10,10 +10,8 @@ public class CommandMOVE implements CommandInterfaceExecutor {
             return;
         }
         try {
-            int ux = Integer.parseInt(parts[0]); // klient podaje 1..size
+            int ux = Integer.parseInt(parts[0]);
             int uy = Integer.parseInt(parts[1]);
-
-            // konwersja na 0-based dla logiki gry
             int x = ux - 1;
             int y = uy - 1;
             game.putStone(x, y);

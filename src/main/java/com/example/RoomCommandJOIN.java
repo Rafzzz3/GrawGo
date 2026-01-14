@@ -9,6 +9,9 @@ public class RoomCommandJOIN implements RoomCommandInterfaceExecutor {
             if (room == null) {
                 message = "Pokój o podanym ID nie istnieje.";
             }
+            else if (player.getCurrentRoom() != null && room.getId() == player.getCurrentRoom().getId()) {
+                message = "Już jesteś w tym  pokoju.";
+            }
             else if (room.getPlayerCount() >= 2) {
                 message = "Pokój jest pełny.";
             }

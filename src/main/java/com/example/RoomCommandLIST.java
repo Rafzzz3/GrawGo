@@ -8,7 +8,7 @@ public class RoomCommandLIST implements RoomCommandInterfaceExecutor {
         ArrayList<Room> rooms = roomManager.getRoomList();
         List<String> roomDescriptions = new ArrayList<>();
         for (Room room : rooms) { 
-            String roomInfo = "Pokój ID: " + room.getId() + ", Rozmiar: " + room.getGame().getBoard().getBoardSize() +  "Graczy: " + room.getPlayers().size() + "/" + "2";
+            String roomInfo = "Pokój ID: " + room.getId() + ", Rozmiar: " + room.getGame().getBoard().getBoardSize() +  " Graczy: " + room.getPlayers().size() + "/" + "2";
             roomDescriptions.add(roomInfo);
         }
 

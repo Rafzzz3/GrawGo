@@ -1,9 +1,8 @@
 package com.example;
-import java.net.Socket;
-
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.application.Platform;
+import java.util.List;
 public class GameApp extends Application implements GuiListner {
     private Stage mainStage;
     private GuiLobbyView lobbyView;
@@ -64,9 +63,9 @@ public class GameApp extends Application implements GuiListner {
         });
     }
     @Override
-    public void forLobbyList(java.util.List<String> lobbyList) {
+    public void forLobbyList(List<String> lobbyList) {
         Platform.runLater(() -> {
-            lobbyView.updateLobbyList(lobbyList);
+            lobbyView.updateRoomList(lobbyList);
         });
     }
 }

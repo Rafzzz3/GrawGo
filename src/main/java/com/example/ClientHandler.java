@@ -88,12 +88,22 @@ public class ClientHandler implements Runnable {
         catch (IOException | ClassNotFoundException e) {
             System.out.println("Błąd odczytu z klienta: " + e.getMessage());
         } finally {
-            try {
-                if (socket != null && !socket.isClosed()) {
-                    socket.close();
+            if (currentRoom != null) {
+                currentRoom.removePlayer(this);
+                if (currentRoom.getPlayers().isEmpty()) {
+                    roomManager.removeRoom(currentRoom.getId());
+                    System.out.println("Usunięto pokój o ID: " + currentRoom.getId());
                 }
+                else {
+                    for (ClientHandler player : currentRoom.getPlayers()) {
+                        player.getServerSender().sendMessage("Przeciwnik rozłączył się.");
+                    }
+                }
+            }   
+            try {
+                socket.close();
             } catch (IOException e) {
-                System.out.println("Błąd zamknięcia zasobów: " + e.getMessage());
+                System.out.println("Błąd zamknięcia gniazda: " + e.getMessage());
             }
         }
     }

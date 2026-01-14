@@ -39,7 +39,13 @@ public class Room {
         }
         players.add(player);
     }
-
+    public void removePlayer(ClientHandler player) {
+        players.remove(player);
+        if (players.isEmpty()) {
+            readyCounter = 0;
+            gameStarted = false;
+        }
+    }
     public int getId() {
         return id;
     }

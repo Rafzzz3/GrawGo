@@ -24,6 +24,12 @@ public class SocketClient {
             }
         }).start();
     }
+    public ClientSender getClientSender() {
+        return clientSender;
+    }
+    public ClientReceiver getClientReceiver() {
+        return clientReceiver;
+    }
     public void close() {
         try { 
             if (socket != null) {

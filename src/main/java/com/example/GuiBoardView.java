@@ -23,4 +23,7 @@ public class GuiBoardView {
     public void setMessage(String message) {
         infoArea.appendText("\n" + message);
     }
+    public void updateBoard(Board board) {
+        drawingPanel.updateBoard(board);
+    }
 }

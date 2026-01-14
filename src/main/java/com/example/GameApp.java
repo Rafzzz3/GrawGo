@@ -3,6 +3,7 @@ import java.net.Socket;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import javafx.application.Platform;
 public class GameApp extends Application implements GuiListner {
     private Stage mainStage;
     private GuiLobbyView lobbyView;
@@ -19,7 +20,9 @@ public class GameApp extends Application implements GuiListner {
         lobbyView = new GuiLobbyView(socketClient);
         boardView = new GuiBoardView(socketClient);
         try {
-            socketClient.connect();
+            if (socketClient.getClientReceiver() != null) {
+                socketClient.getClientReceiver().setListener(this);
+            }
         } catch (Exception e) {
             System.out.println("Błąd podczas łączenia z serwerem: " + e.getMessage());
             return;
@@ -34,21 +37,25 @@ public class GameApp extends Application implements GuiListner {
     }
     @Override
     public void forMessage(String message) {
-        if (gameStarted) {
-            boardView.setMessage(message);
-            return;
-        }
-        else {
-            lobbyView.setMessage(message);
-        }
+        Platform.runLater(() -> {
+            if (gameStarted) {
+                boardView.setMessage(message);
+            }
+            else {
+                lobbyView.setMessage(message);
+            }
+        });
     }
     @Override
     public void forBoard(Board board) {
-        if (!gameStarted) {
-            gameStarted = true;
-            mainStage.setScene(boardView.getScene());
-            mainStage.sizeToScene();
-        }
+        Platform.runLater(() -> {
+            if (!gameStarted) {
+                gameStarted = true;
+                mainStage.setScene(boardView.getScene());
+                mainStage.sizeToScene();
+            }
+            boardView.updateBoard(board);
+        });
         // Tu trzeba jeszcze wysłać board do boardView żeby aktualizować wygląd boarda;
     }
 }

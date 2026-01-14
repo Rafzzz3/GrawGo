@@ -19,13 +19,21 @@ public class GuiLobbyView {
         infoArea.setPrefHeight(400);
         infoArea.setText("Oczekiwanie na połączenie");
         HBox buttonBox = new HBox(10);
-        TextField inputField = new TextField("Numer pokoju");
-        Button sendButton = new Button("Send");
+        TextField inputField = new TextField("Podaj rozmiar pokoju");
         Button createButton = new Button("Create Room");
         Button joinButton = new Button("Join Room");
         Button readyButton = new Button("Ready");
-        buttonBox.getChildren().addAll(inputField, sendButton, createButton, joinButton, readyButton);
+        buttonBox.getChildren().addAll(inputField, createButton, joinButton, readyButton);
         layoutBox.getChildren().addAll(titleLabel, infoArea, buttonBox);
+        createButton.setOnAction(e -> {
+            socketClient.getClientSender().sendToGui("CREATE " + inputField.getText());
+        });
+        joinButton.setOnAction(e -> {
+            socketClient.getClientSender().sendToGui("JOIN " + inputField.getText());
+        });
+        readyButton.setOnAction(e -> {
+            socketClient.getClientSender().sendToGui("READY");
+        });
         scene = new Scene(layoutBox, 400, 500); 
     }
     public Scene getScene() {

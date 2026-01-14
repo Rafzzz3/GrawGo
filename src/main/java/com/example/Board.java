@@ -30,7 +30,5 @@ public class Board implements Serializable {
     public int getBoardSize() {
         return board_size;
     }
-    public Stone[][] getTable() {
-        return table;
-    }
+
 }

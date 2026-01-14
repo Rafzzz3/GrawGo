@@ -6,4 +6,5 @@ public interface GuiListner {
     void forLobbyList(List<String> lobbyList);
     void forMoveResult(MoveResult result);
     void forJoinedRoom(int roomId);
+    void forExitRoom();
 }

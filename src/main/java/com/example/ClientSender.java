@@ -11,6 +11,7 @@ public class ClientSender implements Runnable {
         try {
             output.writeObject(message);
             output.flush();
+            
         } catch (Exception e) {
             System.out.println("Błąd wysyłania do klienta: " + e.getMessage());
         }

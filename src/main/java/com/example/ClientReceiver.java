@@ -28,7 +28,11 @@ public class ClientReceiver implements Runnable {
                                 System.out.println("Błąd parsowania ID pokoju: " + e.getMessage());
                             }
                     } 
-                    else {
+                    else if (message.startsWith("EXIT_ROOM")) {
+                        if (listener != null) {
+                            listener.forExitRoom();
+                        }
+                    } else {
                         if (listener != null) {
                             listener.forMessage(message);
                         }

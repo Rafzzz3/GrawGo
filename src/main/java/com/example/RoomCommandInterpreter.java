@@ -10,6 +10,7 @@ public class RoomCommandInterpreter {
         commands.put("LIST", new RoomCommandLIST());
         commands.put("JOIN", new RoomCommandJOIN());
         commands.put("READY", new RoomCommandREADY());
+        commands.put("LEAVE", new RoomCommandLEAVE());
     }
     public void interpret(RoomManager roomManager, ClientHandler player, String message) {
         String[] commandMessage = message.trim().split(" ", 2);

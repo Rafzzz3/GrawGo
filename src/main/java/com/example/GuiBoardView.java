@@ -5,6 +5,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 
 public class GuiBoardView {     
     private Scene scene;
@@ -14,19 +15,26 @@ public class GuiBoardView {
     public GuiBoardView(SocketClient socketClient) {
         this.socketClient = socketClient;
         BorderPane layout = new BorderPane();
-        infoArea = new TextArea();
-        infoArea.setEditable(false);
+        Button passButton = new Button("Pass");
+        Button surrenderButton = new Button("Surrender");
         layout.setTop(infoArea);
         drawingPanel = new GoDrawingPanel();
+        passButton.setOnAction(e -> passTurn());
+        surrenderButton.setOnAction(e -> surrenderGame());
         drawingPanel.setOnMoveListener(command -> socketClient.getClientSender().sendToGui(command));
+        layout.setLeft(passButton);
+        layout.setRight(surrenderButton);
         layout.setCenter(drawingPanel);
         scene = new Scene(layout, 600, 600);
     }
     public Scene getScene() {
         return scene;
     }
-    public void setMessage(String message) {
-        Platform.runLater(() -> infoArea.appendText("\n" + message));
+    public void passTurn() {
+        socketClient.getClientSender().sendToGui("PASS");
+    }
+    public void surrenderGame() {
+        socketClient.getClientSender().sendToGui("SURRENDER");
     }
     public void updateBoard(Board board) {
         Platform.runLater(() -> drawingPanel.updateBoard(board));
@@ -51,18 +59,17 @@ public class GuiBoardView {
                     showPopup(AlertType.INFORMATION, "Czekaj!", result.message);
                     break;
                 case OK:
-                    if (result.message != null && !result.message.isEmpty()) {
-                        setMessage(result.message);
-                    }
                     break;
                 case PASS:
                     showPopup(AlertType.INFORMATION, "Pass", result.message);
                     break;
                 case SURRENDER:
                     showPopup(AlertType.INFORMATION, "Poddanie się", result.message);
+                    socketClient.getClientSender().sendToGui("LEAVE");
                     break;
                 case GAME_OVER:
                     showPopup(AlertType.INFORMATION, "Koniec gry", result.message);
+                    socketClient.getClientSender().sendToGui("LEAVE");
                     break;
             }
         });

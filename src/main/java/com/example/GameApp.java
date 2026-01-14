@@ -35,6 +35,7 @@ public class GameApp extends Application implements GuiListner {
         }
         mainStage.setTitle("Gra Go");
         mainStage.setScene(lobbyView.getScene());
+        lobbyView.refreshRoomList();
         mainStage.setOnCloseRequest(e -> {
             socketClient.close();
             System.exit(0);
@@ -45,10 +46,10 @@ public class GameApp extends Application implements GuiListner {
     public void forMessage(String message) {
         Platform.runLater(() -> {
             if (gameStarted) {
-                boardView.setMessage(message);
             }
             else {
                 lobbyView.setMessage(message);
+                lobbyView.refreshRoomList();
             }
         });
     }
@@ -83,6 +84,15 @@ public class GameApp extends Application implements GuiListner {
             roomView = new GuiRoomView(socketClient, roomId);
             mainStage.setScene(roomView.getScene());
             mainStage.setTitle("Gra w go pokój nr. " + roomId);
+        });
+    }
+    @Override
+    public void forExitRoom() {
+        Platform.runLater(() -> {
+            gameStarted = false;
+            mainStage.setScene(lobbyView.getScene());
+            mainStage.setTitle("Gra Go - Lobby");
+            lobbyView.refreshRoomList();
         });
     }
 }

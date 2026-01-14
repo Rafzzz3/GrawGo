@@ -30,6 +30,10 @@ public class ClientHandler implements Runnable {
             while (!socket.isClosed()) {
                 String clientcommand = (String) input.readObject();
                 System.out.println("Otrzymano odpowiedź od gracza: " + clientcommand);
+                if (clientcommand.trim().equals("LEAVE")) {
+                    roomCommandInterpreter.interpret(roomManager, this, clientcommand);
+                    continue;
+                }
                 if (currentRoom == null || !currentRoom.isGameStarted()) {
                     roomCommandInterpreter.interpret(roomManager, this, clientcommand);
                 // } else if (currentRoom.isGameStarted()) {
@@ -71,10 +75,19 @@ public class ClientHandler implements Runnable {
                     if (game != null && game.getLastMoveResult() != null) {
         
                         serverSender.sendObject(game.getLastMoveResult());
-
-                        if (game.getLastMoveResult().code == MoveCode.OK) {
+                        if (game.getLastMoveResult().code == MoveCode.SURRENDER || game.getLastMoveResult().code == MoveCode.GAME_OVER) {
+                            for (ClientHandler player : currentRoom.getPlayers()) {
+                                if (player != this) { 
+                                    player.getServerSender().sendObject(game.getLastMoveResult());
+                                }
+                            }
+                        }                        
+                        if (game.getLastMoveResult().code == MoveCode.OK || game.getLastMoveResult().code == MoveCode.PASS) {
                             for (ClientHandler player : currentRoom.getPlayers()) {
                                 player.getServerSender().sendObject(game.getBoard());
+                                if (game.getLastMoveResult().code == MoveCode.PASS && player != this) {
+                                    player.getServerSender().sendMessage(LobbyMessageType.INFO + ": Przeciwnik spasował.");
+                                }
                             }
                         }
                         
@@ -96,7 +109,7 @@ public class ClientHandler implements Runnable {
                 }
                 else {
                     for (ClientHandler player : currentRoom.getPlayers()) {
-                        player.getServerSender().sendMessage("Przeciwnik rozłączył się.");
+                        player.getServerSender().sendMessage(LobbyMessageType.INFO+" Przeciwnik rozłączył się.");
                     }
                 }
             }   

@@ -10,11 +10,15 @@ import java.util.function.Consumer;
 public class GoDrawingPanel extends Canvas {
     private Board currentBoard;
     private static final int MARGIN = 20;
-    public GoDrawingPanel(Board board) {
+
+    private Consumer<String> onMoveListener;
+
+    public GoDrawingPanel() {
         super(500, 500);
-        this.currentBoard = board;
+        this.setOnMouseClicked(event -> clickToPlaceStone(event.getX(), event.getY()));
     }
     public void updateBoard(Board board) {
+        currentBoard = board;
         drawBoard(board);
     }
     public void setOnMoveListener(Consumer<String> listener) {

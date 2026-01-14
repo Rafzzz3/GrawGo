@@ -34,7 +34,7 @@ public class GuiLobbyView {
         readyButton.setOnAction(e -> {
             socketClient.getClientSender().sendToGui("READY");
         });
-        scene = new Scene(layoutBox, 400, 500); 
+        scene = new Scene(layoutBox, 800, 1000); 
     }
     public Scene getScene() {
         return scene;

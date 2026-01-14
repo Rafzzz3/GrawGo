@@ -13,6 +13,7 @@ public class RoomCommandREADY implements RoomCommandInterfaceExecutor {
         if (room.isGameStarted()) {
             for (ClientHandler gracz : room.getPlayers()) {
                 gracz.getServerSender().sendMessage("Wszyscy gracze są gotowi. Gra się rozpoczyna!");
+                gracz.getServerSender().sendObject(room.getGame().getBoard());
             }
         }
     }

@@ -34,9 +34,6 @@ public class ClientHandler implements Runnable {
                     roomCommandInterpreter.interpret(roomManager, this, clientcommand);
                 } else if (currentRoom.isGameStarted()) {
                     game = currentRoom.getGame();
-                    for (ClientHandler player : currentRoom.getPlayers()) {
-                        player.getServerSender().sendObject(game.getBoard());
-                    }
                     if (!game.isTurn(getPlayerColor())) {
                         serverSender.sendMessage("Nie twoja tura. Czekaj na ruch przeciwnika.");
                         continue;

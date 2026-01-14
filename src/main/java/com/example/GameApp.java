@@ -10,13 +10,19 @@ public class GameApp extends Application implements GuiListner {
     private GuiBoardView boardView;
     private SocketClient socketClient;
     private boolean gameStarted = false;
-    private static void main(String[] args) {
+    public static void main(String[] args) {
         launch(args);
     }
     @Override
     public void start(Stage mainStage) {
         this.socketClient = new SocketClient();
         this.mainStage = mainStage;
+        try {
+            socketClient.connect();
+        } catch (Exception e) {
+            System.out.println("Błąd podczas łączenia z serwerem: " + e.getMessage());
+            return;
+        }
         lobbyView = new GuiLobbyView(socketClient);
         boardView = new GuiBoardView(socketClient);
         try {

@@ -22,7 +22,7 @@ public class RoomCommandInterpreter {
         if (commandExecutor != null) {
             commandExecutor.execute(player, roomManager, args);
         } else {
-            player.getServerSender().sendMessage("Nieznana komenda pokoju: " + commandName);
+            player.getServerSender().sendMessage(LobbyMessageType.ERROR.name() +": Nieznana komenda pokoju: " + commandName);
         }
     }
 }

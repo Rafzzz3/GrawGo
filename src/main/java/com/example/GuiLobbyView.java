@@ -36,11 +36,21 @@ public class GuiLobbyView {
     }
     public void setMessage(String message) {
         Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Informacja");
-            alert.setHeaderText(null);
-            alert.setContentText(message);
-            alert.showAndWait();
+            String prefix = message.split(":", 2)[0];
+            String trimmedMessage = message.split(":", 2)[1].trim();
+            Alert.AlertType type;
+            switch (prefix) {
+                case "ALERT":
+                    type = Alert.AlertType.ERROR; 
+                    break;
+                case "INFO":
+                    type = Alert.AlertType.INFORMATION;
+                    break;
+                default:
+                    type = Alert.AlertType.NONE;
+                    break;
+            }
+            showPopup(type, message);
         });
     }
     public void createRoom(String size) {
@@ -62,5 +72,11 @@ public class GuiLobbyView {
             socketClient.getClientSender().sendToGui("JOIN " + roomId);
             updateRoomList(roomList.getItems());
         }
+    }
+    private void showPopup(Alert.AlertType type, String message) {
+        Alert alert = new Alert(type);
+        alert.setTitle("");
+        alert.setContentText(message);      
+        alert.showAndWait();
     }
 }

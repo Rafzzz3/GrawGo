@@ -6,17 +6,11 @@ public class RoomCommandJOIN implements RoomCommandInterfaceExecutor {
         try {
             Room room = roomManager.findRoom(Integer.parseInt(args));
             String message;
-            if (room == null) {
-                message = "Pokój o podanym ID nie istnieje.";
-            }
-            else if (player.getCurrentRoom() != null && room.getId() == player.getCurrentRoom().getId()) {
-                message = "Już jesteś w tym  pokoju.";
-            }
-            else if (room.getPlayerCount() >= 2) {
-                message = "Pokój jest pełny.";
+            if (room.getPlayerCount() >= 2) {
+                message = LobbyMessageType.ALERT.name() + ": Pokój jest pełny.";
             }
             else {
-                message = "Dołączyłeś do pokoju: " + room.getId();
+                message = LobbyMessageType.INFO.name() + ": Dołączyłeś do pokoju: " + room.getId();
                 player.setCurrentRoom(room);
                 room.addPlayer(player);
                 if (player.getPlayerColor() == Stone.BLACK) {
@@ -28,7 +22,7 @@ public class RoomCommandJOIN implements RoomCommandInterfaceExecutor {
             player.getServerSender().sendMessage(message);
         }
         catch (Exception e) {
-            player.getServerSender().sendMessage("Nie udało się dołączyć do pokoju: " + e.getMessage());
+            player.getServerSender().sendMessage(LobbyMessageType.ERROR.name() + ": Nie udało się dołączyć do pokoju: " + e.getMessage());
         }
     }
     

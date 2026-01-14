@@ -15,6 +15,7 @@ public class GuiBoardView {
         infoArea.setEditable(false);
         layout.setTop(infoArea);
         drawingPanel = new GoDrawingPanel();
+        drawingPanel.setOnMoveListener(command -> socketClient.getClientSender().sendToGui(command));
         layout.setCenter(drawingPanel);
         scene = new Scene(layout, 600, 600);
     }

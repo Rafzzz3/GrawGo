@@ -1,5 +1,6 @@
 package com.example;
 import java.io.IOException;
+import java.util.List;
 import java.io.ObjectInputStream;
 public class ClientReceiver implements Runnable {
     private ObjectInputStream input;
@@ -24,6 +25,11 @@ public class ClientReceiver implements Runnable {
                     Board board = (Board) receivedObject;
                     if (listener != null) {
                         listener.forBoard(board);
+                    }
+                } else if (receivedObject instanceof List) {
+                    List<String> lobbyList = (List<String>) receivedObject;
+                    if (listener != null) {
+                        listener.forLobbyList(lobbyList);
                     }
                 }
                 System.out.println("SERWER:");

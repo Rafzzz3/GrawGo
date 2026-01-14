@@ -62,6 +62,11 @@ public class GameApp extends Application implements GuiListner {
             }
             boardView.updateBoard(board);
         });
-        // Tu trzeba jeszcze wysłać board do boardView żeby aktualizować wygląd boarda;
+    }
+    @Override
+    public void forLobbyList(java.util.List<String> lobbyList) {
+        Platform.runLater(() -> {
+            lobbyView.updateLobbyList(lobbyList);
+        });
     }
 }

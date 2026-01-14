@@ -6,6 +6,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import java.util.List;
+import java.util.Optional;
 public class GuiLobbyView {
     private Scene scene;
     private ListView<String> roomList;
@@ -20,12 +21,11 @@ public class GuiLobbyView {
         roomList.setPrefHeight(400);
         roomList.setPrefWidth(400);
         HBox buttonBox = new HBox(10);
-        TextField inputField = new TextField("Podaj rozmiar pokoju");
         Button createButton = new Button("Create Room");
         Button refreshButton = new Button("Refresh List");
-        buttonBox.getChildren().addAll(inputField, roomList, createButton, refreshButton);
-        layoutBox.getChildren().addAll(titleLabel, buttonBox);
-        createButton.setOnAction(e -> createRoom(inputField.getText()));
+        buttonBox.getChildren().addAll(createButton, refreshButton);
+        layoutBox.getChildren().addAll(titleLabel, buttonBox, roomList);
+        createButton.setOnAction(e -> showCreateRoomDialog());
         refreshButton.setOnAction(e -> refreshRoomList());
         roomList.setOnMouseClicked(e -> handleRoomClicked());
         scene = new Scene(layoutBox, 800, 1000); 
@@ -49,11 +49,23 @@ public class GuiLobbyView {
                     type = Alert.AlertType.NONE;
                     break;
             }
-            showPopup(type, message);
+            showPopup(type, trimmedMessage);
         });
     }
     public void createRoom(String size) {
         socketClient.getClientSender().sendToGui("CREATE " + size);
+    }
+    private void showCreateRoomDialog() {
+        ChoiceDialog<String> dialog = new ChoiceDialog<>("19", "9", "13", "19");
+        dialog.setTitle("Nowy Pokój");
+        dialog.setHeaderText("Wybierz rozmiar planszy:");
+        dialog.setContentText("Rozmiar:");
+
+        Optional<String> wynik = dialog.showAndWait();
+        if (wynik.isPresent()) {
+            String rozmiar = wynik.get();
+            createRoom(rozmiar);
+        }
     }
     public void refreshRoomList() {
         socketClient.getClientSender().sendToGui("LIST");

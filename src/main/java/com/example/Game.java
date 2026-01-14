@@ -6,6 +6,8 @@ public class Game {
     private GameLogic logic;
     private String response;
     private MoveResult lastMoveResult;
+    private int consecutivePasses = 0;
+    private boolean gameFinished = false;
     private final GameState blackState;
     private final GameState whiteState;
     private GameState currentState;
@@ -20,8 +22,67 @@ public class Game {
 
     // Punkt wjescia z zewnatrz
     public synchronized boolean putStone(int x, int y) {
-        return currentState.stateMove(this, x, y);
+        if (gameFinished) {
+            return false;
+        }
+
+        boolean result = currentState.stateMove(this, x, y);
+        if (result) {
+            resetPassCounter();
+        }
+
+        return result;
     }
+
+
+    public synchronized MoveResult pass(Stone playerColor) {
+        if (!isTurn(playerColor)) {
+            return new MoveResult(MoveCode.NOT_YOUR_TURN, new int[0][], "Nie twoja tura!");
+        }
+
+        consecutivePasses++;
+
+        // koniec gry
+        if (consecutivePasses >= 2) {
+            gameFinished = true;
+            
+            // Liczymy punkty
+            logic.calculateTerritory(board);
+            int blackScore = logic.getBlackTerritory() + logic.getBlackKills();
+            int whiteScore = logic.getWhiteTerritory() + logic.getWhiteKills();
+            
+            // Budujemy wiadomość końcową
+            String scoreMsg = "KONIEC GRY (2x PASS).\n" + 
+                              "Wynik:\n" + 
+                              "⚫ Czarny: " + blackScore + " (Teren: " + logic.getBlackTerritory() + ", Jeńcy: " + logic.getBlackKills() + ")\n" +
+                              "⚪ Biały: " + whiteScore + " (Teren: " + logic.getWhiteTerritory() + ", Jeńcy: " + logic.getWhiteKills() + ")";
+            
+            return new MoveResult(MoveCode.GAME_OVER, new int[0][], scoreMsg);
+        }
+
+        if (currentState == blackState) {
+            setState(whiteState);
+        } else {
+            setState(blackState);
+        }
+
+        return new MoveResult(MoveCode.PASS, new int[0][], "Gracz " + playerColor + " spasował.");
+    }
+
+
+    public synchronized MoveResult surrender(Stone playerColor) {
+        gameFinished = true;
+        String winner;
+
+        if (playerColor == Stone.BLACK) {
+            winner = "Czarny";
+        } else {
+            winner = "Biały";
+        }
+        
+        return new MoveResult(MoveCode.SURRENDER, new int[0][], "Gracz " + playerColor + " poddał się! Wygrywa " + winner + ".");
+    }
+
     public synchronized boolean isTurn(Stone color) {
         if (color == null) {
             return false;
@@ -45,6 +106,10 @@ public class Game {
     public Board getBoard() { return board; }
     public GameLogic getLogic() { return logic; }
     public MoveResult getLastMoveResult() { return lastMoveResult; }
+
+    public synchronized void resetPassCounter() {
+        this.consecutivePasses = 0;
+    }
 
     // Plansza Go w Unicode: ● (czarny), ○ (biały), linie ┌┬┐ ├┼┤ └┴┘
     // public String renderBoard() {

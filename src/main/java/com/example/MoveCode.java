@@ -6,5 +6,8 @@ public enum MoveCode {
     OCCUPIED,
     SUICIDE,
     KO,
-    NOT_YOUR_TURN
+    NOT_YOUR_TURN,
+    PASS,
+    SURRENDER,
+    GAME_OVER
 }

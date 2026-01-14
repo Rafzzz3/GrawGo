@@ -6,6 +6,8 @@ public class GameCommandInterpreter {
     private Map<String, CommandInterfaceExecutor> commandList = new HashMap<>();
     public GameCommandInterpreter() {
         commandList.put("MOVE", new CommandMOVE());
+        commandList.put("PASS", new GameCommandPASS());
+        commandList.put("SURRENDER", new GameCommandSURRENDER());
     }
     public void interpret(Game game, String message, ClientHandler player) {
         String[] commandsMessage = message.trim().split(" ", 2);

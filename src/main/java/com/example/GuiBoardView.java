@@ -56,6 +56,15 @@ public class GuiBoardView {
                         setMessage(result.message);
                     }
                     break;
+                case PASS:
+                    showPopup(AlertType.INFORMATION, "Pass", result.message);
+                    break;
+                case SURRENDER:
+                    showPopup(AlertType.INFORMATION, "Poddanie się", result.message);
+                    break;
+                case GAME_OVER:
+                    showPopup(AlertType.INFORMATION, "Koniec gry", result.message);
+                    break;
             }
         });
     }

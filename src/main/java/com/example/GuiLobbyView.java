@@ -6,7 +6,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 public class GuiLobbyView {
     private Scene scene;
-    private TextArea infoArea;
+    private ListView<String> roomList;
     private SocketClient socketClient;
     public GuiLobbyView(SocketClient socketClient) {
         this.socketClient = socketClient;
@@ -14,17 +14,25 @@ public class GuiLobbyView {
         layoutBox.setPadding(new Insets(10));
         Label titleLabel = new Label("Lobby gry");
         titleLabel.setStyle("-fx-font-size: 30px; -fx-font-weight: bold;");
-        infoArea = new TextArea();
-        infoArea.setEditable(false);
-        infoArea.setPrefHeight(400);
-        infoArea.setText("Oczekiwanie na połączenie");
+        roomList = new ListView<>();
+        roomList.setPrefHeight(400);
+        roomList.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                String selectedRoom = roomList.getSelectionModel().getSelectedItem();
+                if (selectedRoom != null) {
+                    String roomId = selectedRoom.split(",")[0].split(":")[1].trim();
+                    socketClient.getClientSender().sendToGui("JOIN " + roomId);
+                }
+            }
+        });
         HBox buttonBox = new HBox(10);
         TextField inputField = new TextField("Podaj rozmiar pokoju");
         Button createButton = new Button("Create Room");
         Button joinButton = new Button("Join Room");
+        Button refreshButton = new Button("Refresh List");
         Button readyButton = new Button("Ready");
         buttonBox.getChildren().addAll(inputField, createButton, joinButton, readyButton);
-        layoutBox.getChildren().addAll(titleLabel, infoArea, buttonBox);
+        layoutBox.getChildren().addAll(titleLabel, buttonBox);
         createButton.setOnAction(e -> {
             socketClient.getClientSender().sendToGui("CREATE " + inputField.getText());
         });

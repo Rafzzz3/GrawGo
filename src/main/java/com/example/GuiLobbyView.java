@@ -22,9 +22,8 @@ public class GuiLobbyView {
         HBox buttonBox = new HBox(10);
         TextField inputField = new TextField("Podaj rozmiar pokoju");
         Button createButton = new Button("Create Room");
-        Button readyButton = new Button("Ready");
         Button refreshButton = new Button("Refresh List");
-        buttonBox.getChildren().addAll(inputField, roomList, createButton, readyButton, refreshButton);
+        buttonBox.getChildren().addAll(inputField, roomList, createButton, refreshButton);
         layoutBox.getChildren().addAll(titleLabel, buttonBox);
         createButton.setOnAction(e -> createRoom(inputField.getText()));
         refreshButton.setOnAction(e -> refreshRoomList());
@@ -70,6 +69,7 @@ public class GuiLobbyView {
         if (selectedRoom != null) {
             String roomId = selectedRoom.split(",")[0].split(":")[1].trim();
             socketClient.getClientSender().sendToGui("JOIN " + roomId);
+            
             updateRoomList(roomList.getItems());
         }
     }

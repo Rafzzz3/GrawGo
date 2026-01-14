@@ -7,6 +7,7 @@ public class GameApp extends Application implements GuiListner {
     private Stage mainStage;
     private GuiLobbyView lobbyView;
     private GuiBoardView boardView;
+    private GuiRoomView roomView;
     private SocketClient socketClient;
     private boolean gameStarted = false;
     public static void main(String[] args) {
@@ -74,6 +75,14 @@ public class GameApp extends Application implements GuiListner {
             if (gameStarted && boardView != null) {
                 boardView.handleMoveResult(result);
             }
+        });
+    }
+    @Override
+    public void forJoinedRoom(int roomId) {
+        Platform.runLater(() -> {
+            roomView = new GuiRoomView(socketClient, roomId);
+            mainStage.setScene(roomView.getScene());
+            mainStage.setTitle("Gra w go pokój nr. " + roomId);
         });
     }
 }

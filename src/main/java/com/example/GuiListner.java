@@ -5,4 +5,5 @@ public interface GuiListner {
     void forBoard(Board board);
     void forLobbyList(List<String> lobbyList);
     void forMoveResult(MoveResult result);
+    void forJoinedRoom(int roomId);
 }

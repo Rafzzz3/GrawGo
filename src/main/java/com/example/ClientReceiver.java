@@ -18,8 +18,20 @@ public class ClientReceiver implements Runnable {
                 Object receivedObject = input.readObject();
                 if (receivedObject instanceof String) {
                     String message = (String) receivedObject;
-                    if (listener != null) {
-                        listener.forMessage(message);
+                    if (message.startsWith("JOINED_ROOM ")) {
+                        try {
+                                int roomId = Integer.parseInt(message.split(" ")[1]);
+                                if (listener != null) {
+                                    listener.forJoinedRoom(roomId);
+                                }
+                            } catch (Exception e) {
+                                System.out.println("Błąd parsowania ID pokoju: " + e.getMessage());
+                            }
+                    } 
+                    else {
+                        if (listener != null) {
+                            listener.forMessage(message);
+                        }
                     }
                 } else if (receivedObject instanceof Board) {
                     Board board = (Board) receivedObject;

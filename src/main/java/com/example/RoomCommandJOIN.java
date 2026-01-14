@@ -20,6 +20,7 @@ public class RoomCommandJOIN implements RoomCommandInterfaceExecutor {
                 }
             }
             player.getServerSender().sendMessage(message);
+            player.getServerSender().sendMessage("JOINED_ROOM " + room.getId());
         }
         catch (Exception e) {
             player.getServerSender().sendMessage(LobbyMessageType.ERROR.name() + ": Nie udało się dołączyć do pokoju: " + e.getMessage());

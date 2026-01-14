@@ -1,6 +1,8 @@
 package com.example;
 
-public class MoveResult {
+import java.io.Serializable;
+
+public class MoveResult implements Serializable {
     public final MoveCode code;
     public final int[][] captured;
     public final String message;

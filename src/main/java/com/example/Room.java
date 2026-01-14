@@ -19,7 +19,7 @@ public class Room {
     }
 
     public void addPlayer(ClientHandler player) {
-        if (players.size() == 0) {
+        if (players.isEmpty()) {
             // losuj kolor dla pierwszego gracza
             boolean blackFirst = random.nextBoolean();
             if (blackFirst) {

@@ -31,7 +31,6 @@ public class GuiBoardView {
     public void updateBoard(Board board) {
         Platform.runLater(() -> drawingPanel.updateBoard(board));
     }
-
     public void handleMoveResult(MoveResult result) {
         // Logika wyświetlania popupów w zależności od kodu błędu
         Platform.runLater(() -> {

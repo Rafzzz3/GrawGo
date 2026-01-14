@@ -18,6 +18,7 @@ public class GuiLobbyView {
         titleLabel.setStyle("-fx-font-size: 30px; -fx-font-weight: bold;");
         roomList = new ListView<>();
         roomList.setPrefHeight(400);
+        roomList.setPrefWidth(400);
         HBox buttonBox = new HBox(10);
         TextField inputField = new TextField("Podaj rozmiar pokoju");
         Button createButton = new Button("Create Room");
@@ -25,36 +26,41 @@ public class GuiLobbyView {
         Button refreshButton = new Button("Refresh List");
         buttonBox.getChildren().addAll(inputField, roomList, createButton, readyButton, refreshButton);
         layoutBox.getChildren().addAll(titleLabel, buttonBox);
-        createButton.setOnAction(e -> {
-            socketClient.getClientSender().sendToGui("CREATE " + inputField.getText());
-        });
-        readyButton.setOnAction(e -> {
-            socketClient.getClientSender().sendToGui("READY");
-        });
-        refreshButton.setOnAction(e -> {
-            socketClient.getClientSender().sendToGui("LIST");
-        });
-        roomList.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2) {
-                String selectedRoom = roomList.getSelectionModel().getSelectedItem();
-                if (selectedRoom != null) {
-                    String roomId = selectedRoom.split(",")[0].split(":")[1].trim();
-                    socketClient.getClientSender().sendToGui("JOIN " + roomId);
-                }
-            }
-        });
+        createButton.setOnAction(e -> createRoom(inputField.getText()));
+        refreshButton.setOnAction(e -> refreshRoomList());
+        roomList.setOnMouseClicked(e -> handleRoomClicked());
         scene = new Scene(layoutBox, 800, 1000); 
     }
     public Scene getScene() {
         return scene;
     }
     public void setMessage(String message) {
-
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Informacja");
+            alert.setHeaderText(null);
+            alert.setContentText(message);
+            alert.showAndWait();
+        });
+    }
+    public void createRoom(String size) {
+        socketClient.getClientSender().sendToGui("CREATE " + size);
+    }
+    public void refreshRoomList() {
+        socketClient.getClientSender().sendToGui("LIST");
     }
     public void updateRoomList(List<String> rooms) {
         Platform.runLater(() -> {
             roomList.getItems().clear();
             roomList.getItems().addAll(rooms);
         });
+    }
+    public void handleRoomClicked() {
+        String selectedRoom = roomList.getSelectionModel().getSelectedItem();
+        if (selectedRoom != null) {
+            String roomId = selectedRoom.split(",")[0].split(":")[1].trim();
+            socketClient.getClientSender().sendToGui("JOIN " + roomId);
+            updateRoomList(roomList.getItems());
+        }
     }
 }

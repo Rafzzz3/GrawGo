@@ -37,22 +37,22 @@ public class GuiBoardView {
         Platform.runLater(() -> {
             switch (result.code) {
                 case SUICIDE:
-                    showPopup(AlertType.WARNING, "Samobójstwo!", "Nie możesz wykonać ruchu, który pozbawiłby Cię wszystkich oddechów (chyba że coś zabijasz).");
+                    showPopup(AlertType.WARNING, "Samobójstwo!", result.message);
                     break;
                 case KO:
-                    showPopup(AlertType.WARNING, "Zasada KO", "Nie możesz wykonać ruchu, który przywróciłby planszę do stanu sprzed chwili.");
+                    showPopup(AlertType.WARNING, "Zasada KO", result.message);
                     break;
                 case OCCUPIED:
-                    showPopup(AlertType.ERROR, "Pole zajęte", "Tu już stoi kamień, ziomeczku.");
+                    showPopup(AlertType.ERROR, "Pole zajęte", result.message);
                     break;
                 case INVALID_POSITION:
-                    showPopup(AlertType.ERROR, "Błąd", "Nieprawidłowa pozycja.");
+                    showPopup(AlertType.ERROR, "Błąd", result.message);
                     break;
                 case NOT_YOUR_TURN:
-                    showPopup(AlertType.INFORMATION, "Czekaj!", "Teraz tura przeciwnika. Nie pchaj się! 🛑");
+                    showPopup(AlertType.INFORMATION, "Czekaj!", result.message);
                     break;
                 case OK:
-                    if (result.message != null && !result.message.isEmpty() && !result.message.equals("Ruch wykonany pomyślnie.")) {
+                    if (result.message != null && !result.message.isEmpty()) {
                         setMessage(result.message);
                     }
                     break;

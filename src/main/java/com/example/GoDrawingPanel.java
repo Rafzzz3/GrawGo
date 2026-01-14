@@ -1,8 +1,12 @@
 package com.example;
 
+import java.util.function.Consumer;
+
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import java.util.function.Consumer;
+
 public class GoDrawingPanel extends Canvas {
     private Board currentBoard;
     private static final int MARGIN = 20;
@@ -12,6 +16,9 @@ public class GoDrawingPanel extends Canvas {
     }
     public void updateBoard(Board board) {
         drawBoard(board);
+    }
+    public void setOnMoveListener(Consumer<String> listener) {
+        this.onMoveListener = listener;
     }
     private void drawBoard(Board board) {
         if (currentBoard == null) {
@@ -59,8 +66,11 @@ public class GoDrawingPanel extends Canvas {
         int row = (int) Math.round((y - MARGIN) / cellSize);
         if (row >= 0 && row < size && col >= 0 && col < size) {
             String command = "MOVE " + (row+1) + " " + (col+1);
+
+            if (onMoveListener != null) {
+                onMoveListener.accept(command);
+            }
             
         }
-        // TO DO: Metoda do obsługi kliknięcia w celu postawienia kamienia
     }
 }

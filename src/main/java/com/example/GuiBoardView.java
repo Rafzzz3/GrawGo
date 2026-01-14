@@ -1,4 +1,5 @@
 package com.example;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.control.TextArea;
@@ -21,9 +22,9 @@ public class GuiBoardView {
         return scene;
     }
     public void setMessage(String message) {
-        infoArea.appendText("\n" + message);
+        Platform.runLater(() -> infoArea.appendText("\n" + message));
     }
     public void updateBoard(Board board) {
-        drawingPanel.updateBoard(board);
+        Platform.runLater(() -> drawingPanel.updateBoard(board));
     }
 }

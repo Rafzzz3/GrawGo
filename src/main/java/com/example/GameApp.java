@@ -69,4 +69,11 @@ public class GameApp extends Application implements GuiListner {
             lobbyView.updateLobbyList(lobbyList);
         });
     }
-}
+    @Override
+    public void forMoveResult(MoveResult result) {
+        Platform.runLater(() -> {
+            if (gameStarted && boardView != null) {
+                boardView.handleMoveResult(result);
+            }
+        });
+    }

@@ -32,22 +32,53 @@ public class ClientHandler implements Runnable {
                 System.out.println("Otrzymano odpowiedź od gracza: " + clientcommand);
                 if (currentRoom == null || !currentRoom.isGameStarted()) {
                     roomCommandInterpreter.interpret(roomManager, this, clientcommand);
+                // } else if (currentRoom.isGameStarted()) {
+                //     game = currentRoom.getGame();
+                //     if (!game.isTurn(getPlayerColor())) {
+                //         serverSender.sendMessage("Nie twoja tura. Czekaj na ruch przeciwnika.");
+                //         continue;
+                //     }
+                //     commandInterpreter.interpret(game, clientcommand, this);
+                //     // odeślij wynik ostatniej komendy gry do klienta
+                //     if (game != null) {
+                //         String message = game.getMessage();
+                //         if (message != null && !message.isEmpty()) {
+                //             serverSender.sendMessage(message);
+                //         }
+                //         for (ClientHandler player : currentRoom.getPlayers()) {
+                //             player.getServerSender().sendObject(game.getBoard());
+                //         }
+                //     }
+                // }
                 } else if (currentRoom.isGameStarted()) {
                     game = currentRoom.getGame();
+                    
+                    // 1. Sprawdzenie tury
                     if (!game.isTurn(getPlayerColor())) {
-                        serverSender.sendMessage("Nie twoja tura. Czekaj na ruch przeciwnika.");
-                        continue;
+                        MoveResult notTurnResult = new MoveResult(
+                            MoveCode.NOT_YOUR_TURN, 
+                            new int[0][], 
+                            "Nie twoja tura. Czekaj na ruch przeciwnika."
+                        );
+                        serverSender.sendObject(notTurnResult);
+                        continue; // Przerywamy pętlę
                     }
+
+                    // 2. Wykonanie ruchu
                     commandInterpreter.interpret(game, clientcommand, this);
-                    // odeślij wynik ostatniej komendy gry do klienta
-                    if (game != null) {
-                        String message = game.getMessage();
-                        if (message != null && !message.isEmpty()) {
-                            serverSender.sendMessage(message);
+
+                    // 3. Wysłanie wyniku ruchu
+                    if (game != null && game.getLastMoveResult() != null) {
+        
+                        serverSender.sendObject(game.getLastMoveResult());
+
+                        if (game.getLastMoveResult().code == MoveCode.OK) {
+                            for (ClientHandler player : currentRoom.getPlayers()) {
+                                player.getServerSender().sendObject(game.getBoard());
+                            }
                         }
-                        for (ClientHandler player : currentRoom.getPlayers()) {
-                            player.getServerSender().sendObject(game.getBoard());
-                        }
+                        
+                        game.setLastMoveResult(null);
                     }
                 }
             }

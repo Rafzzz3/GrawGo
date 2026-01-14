@@ -5,6 +5,7 @@ public class Game {
     private Board board;
     private GameLogic logic;
     private String response;
+    private MoveResult lastMoveResult;
     private final GameState blackState;
     private final GameState whiteState;
     private GameState currentState;
@@ -36,13 +37,14 @@ public class Game {
 
     public void setMessage(String message) { this.response = message; }
     public String getMessage() { return response; }
-    public void setState(GameState newState) {
-        this.currentState = newState;
-    }
+    public void setState(GameState newState) { this.currentState = newState; }
+    public void setLastMoveResult(MoveResult result) { this.lastMoveResult = result; }
+
     public GameState getBlackState() { return blackState; }
     public GameState getWhiteState() { return whiteState; }
     public Board getBoard() { return board; }
     public GameLogic getLogic() { return logic; }
+    public MoveResult getLastMoveResult() { return lastMoveResult; }
 
     // Plansza Go w Unicode: ● (czarny), ○ (biały), linie ┌┬┐ ├┼┤ └┴┘
     // public String renderBoard() {

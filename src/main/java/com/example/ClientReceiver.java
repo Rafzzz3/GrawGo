@@ -26,6 +26,11 @@ public class ClientReceiver implements Runnable {
                     if (listener != null) {
                         listener.forBoard(board);
                     }
+                } else if (receivedObject instanceof MoveResult) {
+                    MoveResult result = (MoveResult) receivedObject;
+                    if (listener != null) {
+                        listener.forMoveResult(result);
+                    }
                 } else if (receivedObject instanceof List) {
                     List<String> lobbyList = (List<String>) receivedObject;
                     if (listener != null) {

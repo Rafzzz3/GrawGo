@@ -4,23 +4,64 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-//
+/**
+    Klasa reprezentująca obsługę klienta na serwerze.
+    Odpowiada za komunikację z klientem, przetwarzanie komend oraz zarządzanie stanem gry i pokoju 
+    w zależności od otrzymanych poleceń.
+ */
 public class ClientHandler implements Runnable {
+    /**
+     * @param socket Socket używany do komunikacji z klientem.
+     */
     private Socket socket;
+    /**
+     * @param currentRoom Obiekt Room reprezentujący pokój, do którego należy klient.
+     */
     private Room currentRoom = null;
+    /**
+     * @param playerColor Kolor kamienia przypisany do klienta.
+     */
     private Stone playerColor;
+    /**
+     * @param roomManager Obiekt RoomManager zarządzający pokojami na serwerze.
+     */
     private RoomManager roomManager;
+    /**
+     * @param game Obiekt Game reprezentujący aktualną grę w pokoju.
+     */
     private Game game;
+    /**
+     * @param serverSender Obiekt ServerSender odpowiedzialny za wysyłanie danych do klienta.
+     */
     private ServerSender serverSender;
+    /**
+     * @param input Obiekt ObjectInputStream używany do odbierania danych od klienta.
+     */
     private ObjectInputStream input;
+    /**
+     * @param roomCommandInterpreter Obiekt RoomCommandInterpreter do interpretacji komend związanych z pokojem.
+     */
     private RoomCommandInterpreter roomCommandInterpreter;
+    /**
+     * @param commandInterpreter Obiekt GameCommandInterpreter do interpretacji komend związanych z grą.
+     */
     private GameCommandInterpreter commandInterpreter;
+    /**
+     * Konstruktor klasy ClientHandler.
+     * @param socket Socket używany do komunikacji z klientem.
+     * @param roomManager Obiekt RoomManager zarządzający pokojami na serwerze.
+     */
     public ClientHandler( Socket socket, RoomManager roomManager) {
         this.socket = socket;
         this.roomManager = roomManager;
         this.commandInterpreter = new GameCommandInterpreter();
         this.roomCommandInterpreter = new RoomCommandInterpreter(roomManager, this);
     }
+    /**
+     * Metoda run() uruchamia pętlę odbierającą komendy od klienta i przetwarzającą je.
+     * W zależności od stanu pokoju i gry, komendy są interpretowane odpowiednio przez
+     * RoomCommandInterpreter lub GameCommandInterpreter.
+     */
     @Override
     public void run() {
         try {
@@ -120,19 +161,38 @@ public class ClientHandler implements Runnable {
             }
         }
     }
+    /**
+     * Ustawia aktualny pokój klienta.
+     * @param room Obiekt Room reprezentujący pokój.
+     */
     public void setCurrentRoom(Room room) {
         this.currentRoom = room;
     }
+    /**
+     * Zwraca aktualny pokój klienta.
+     * @return Obiekt Room reprezentujący pokój.
+     */
     public Room getCurrentRoom() {
         return currentRoom;
     }
-
+    /**
+     * Zwraca obiekt ServerSender odpowiedzialny za wysyłanie danych do klienta.
+     * @return Obiekt ServerSender.
+     */
     public ServerSender getServerSender() {
         return serverSender;
     }
+    /**
+     * Ustawia kolor kamienia przypisany do klienta.
+     * @param color Kolor kamienia.
+     */
     public void setPlayerColor(Stone color) {
         this.playerColor = color;
     }
+    /**
+     * Zwraca kolor kamienia przypisany do klienta.
+     * @return Kolor kamienia.
+     */
     public Stone getPlayerColor() {
         return this.playerColor;
     }

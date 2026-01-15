@@ -1,14 +1,31 @@
+/**
+ * @authors @Rafzzz3 i @paw08i
+ * @version 1.0
+ */
 package com.example;
-
 import java.io.*;
 import java.net.Socket;
-//TO DO dokończyć socket clienta do komunikacji z serwerem
+/**
+    Klasa reprezentująca klienta socketowego, który łączy się z serwerem,
+    wysyła i odbiera dane za pomocą strumieni obiektów.
+ */
 public class SocketClient {
+    /**
+     * @param socket Socket używany do komunikacji z serwerem.
+     */
     private Socket socket;
+    /**
+     * @param clientSender Obiekt odpowiedzialny za wysyłanie danych do serwera.
+     * @param clientReceiver Obiekt odpowiedzialny za odbieranie danych od serwera
+     */
     private ClientSender clientSender;
     private ClientReceiver clientReceiver;
-    // To chyba jest do poprawki bo coś nie spina, ale zamysł jest taki żeby uruchamiać w osobnym wątku bo w FX 
-    // Application.launch blokuje wątek główny i on robi wszystko i apka jest zamrożona
+    /**
+     * Metoda łącząca klienta z serwerem na określonym hoście i porcie.
+     * Inicjalizuje strumienie do wysyłania i odbierania danych oraz uruchamia
+     * odpowiednie wątki do obsługi komunikacji.
+     * @throws IOException Jeśli wystąpi błąd podczas nawiązywania połączenia.
+     */
     public void connect() throws IOException {
         new Thread(() -> {
             try {
@@ -24,12 +41,23 @@ public class SocketClient {
             }
         }).start();
     }
+    /**
+     * Zwraca obiekt ClientSender odpowiedzialny za wysyłanie danych do serwera.
+     * @return obiekt ClientSender.
+     */
     public ClientSender getClientSender() {
         return clientSender;
     }
+    /**
+     * Zwraca obiekt ClientReceiver odpowiedzialny za odbieranie danych od serwera.
+     * @return Obiekt ClientReceiver.
+     */
     public ClientReceiver getClientReceiver() {
         return clientReceiver;
     }
+    /**
+     * Funkcja close() zamyka połączenie z serwerem.
+     */
     public void close() {
         try { 
             if (socket != null) {

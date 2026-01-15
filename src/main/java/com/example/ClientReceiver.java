@@ -1,16 +1,41 @@
+/**
+ * @authors @Rafzzz3 i @paw08i
+ * @version 1.0
+ */
 package com.example;
 import java.io.IOException;
 import java.util.List;
 import java.io.ObjectInputStream;
+/**
+    Klasa reprezentująca odbiorcę klienta, odpowiedzialnego za odbieranie wiadomości i obiektów z serwera.
+ */
 public class ClientReceiver implements Runnable {
+    /**
+     * @param input Obiekt ObjectInputStream używany do odbierania danych z serwera.
+     */
     private ObjectInputStream input;
+    /**
+     * @param listener Obiekt GuiListner do obsługi odebranych wiadomości i obiektów.
+     */
     private GuiListner listener;
+    /**
+     * Konstruktor klasy ClientReceiver.
+     * @param input Obiekt ObjectInputStream używany do odbierania danych z serwera.
+     */
     public ClientReceiver(ObjectInputStream input) {
         this.input = input;
     }
+    /**
+     * Metoda setListener() ustawia obiekt GuiListner do obsługi odebranych wiadomości i obiektów.
+     * @param listener Obiekt GuiListner.
+     */
     public void setListener(GuiListner listener) {
         this.listener = listener;
     }
+    /**
+     * Metoda run() uruchamia pętlę odbierającą dane z serwera i wywołującą odpowiednie metody
+     * na obiekcie GuiListner w zależności od typu odebranych danych.
+     */
     @Override
     public void run() {
         while (true) {

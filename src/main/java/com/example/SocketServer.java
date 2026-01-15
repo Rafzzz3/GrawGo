@@ -1,17 +1,41 @@
+/** 
+ *  @authors @Rafzzz3 i @paw08i
+ *  @version 1.0
+ */
 package com.example;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-// Tu jest już chyba wszystko gotowe do uruchomienia serwera, potem jesczze sprawdzę czy 
-// opłaca się robić playerId żeby rozróżniać graczy i żeby był doublelock
+/**
+    Klasa reprezentująca serwer socketowy, który nasłuchuje na określonym porcie i obsługuje połączenia od klientów.
+    Serwer działa w nieskończonej pętli, akceptując nowych klientów i tworząc dla nich ich własnych ClientHandler'ów.
+ */
 public class SocketServer {
+    /**
+     * Port, na którym serwer nasłuchuje połączeń od klientów.
+     */
     private int port;
+    /** 
+     * Manager pokoi - zarządza pokojami gier i graczami.
+    */
     private RoomManager roomManager;
+    /** 
+     * Handler wątków klientów - zarządza wątkami obsługującymi komunikację z klientami.
+    */
     private ClientThreadHandler clientThreadHandler = new ClientThreadHandler();
+    /**
+     * Konstruktor klasy SocketServer.
+     * @param port Port, na którym serwer będzie nasłuchiwał połączeń.
+     */
     public SocketServer(int port) {
         this.port = port;
         this.roomManager = new RoomManager();
     }
+    /**
+     * Metoda uruchamiająca serwer i nasłuchująca na połączenia od klientów.
+     * Po zaakceptowaniu połączenia tworzy nowy ClientHandler dla każdego klienta
+     * i przekazuje go do ClientThreadHandler w celu obsługi komunikacji.
+     */
     public void listen() {
 
         try (ServerSocket serverSocket = new ServerSocket(port)) {
@@ -34,6 +58,10 @@ public class SocketServer {
             ex.printStackTrace();
         }
     }
+    /**
+     * Metoda główna uruchamiająca serwer.
+     * @param args Argumenty linii poleceń (nieużywane).
+     */
     public static void main(String[] args) {
         int port = 4444;
         SocketServer server = new SocketServer(port);

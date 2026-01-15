@@ -1,3 +1,7 @@
+/**
+ * @authors @Rafzzz3 i @paw08i
+ * @version 1.0
+ */
 package com.example;
 import java.io.EOFException;
 import java.io.IOException;

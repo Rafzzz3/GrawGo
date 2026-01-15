@@ -1,7 +1,17 @@
 package com.example;
 
+/**
+ * Klasa bazowa dla stanów tury w grze.
+ */
 public class Turn {
-    // Wykonanie ruchu z explicite kolorem – używane przez stany
+    /**
+     * Metoda wewnętrzna obsługująca ruch w grze.
+     * @param game Obiekt gry.
+     * @param x Współrzędne pola, na które wykonywany jest ruch.
+     * @param y Współrzędne pola, na które wykonywany jest ruch.
+     * @param color Kolor kamienia gracza wykonującego ruch.
+     * @return true jeśli ruch został wykonany pomyślnie, false w przeciwnym wypadku.
+     */
     public boolean internalMove(Game game, int x, int y, Stone color) {
         MoveResult r = game.getLogic().move(game.getBoard(), x, y, color);
 

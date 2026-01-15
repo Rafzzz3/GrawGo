@@ -1,17 +1,54 @@
+/**
+ * @authors @Rafzzz3 i @paw08i
+ * @version 1.0
+ */
 package com.example;
 
-// Klasa to wzorzec projektowy Facade i moze (agreguje GameLogic i Board oraz GameState)
+/**
+ * Klasa reprezentująca grę Go, zarządzająca stanem gry, planszą oraz logiką gry (wzorzec projektowy Facade).
+ */
 public class Game {
+    /** 
+     * @param board Obiekt Board reprezentujący planszę gry.
+    */
     private Board board;
+    /** 
+     * @param logic Obiekt GameLogic reprezentujący logikę gry.
+    */
     private GameLogic logic;
+    /** 
+     * @param response Wiadomość zwrotna gry.
+    */
     private String response;
+    /** 
+     * @param lastMoveResult Wynik ostatniego ruchu.
+    */
     private MoveResult lastMoveResult;
+    /** 
+     * @param consecutivePasses Liczba kolejnych spasowań.
+    */
     private int consecutivePasses = 0;
+    /** 
+     * @param gameFinished Flaga wskazująca, czy gra została zakończona.
+    */
     private boolean gameFinished = false;
+    /** 
+     * @param blackState Stan tury czarnego gracza.
+    */
     private final GameState blackState;
+    /** 
+     * @param whiteState Stan tury białego gracza.
+    */
     private final GameState whiteState;
+    /** 
+     * @param currentState Aktualny stan gry.
+    */
     private GameState currentState;
 
+    /** 
+     * Konstruktor klasy Game.
+     * @param size Rozmiar planszy gry.
+    */
     public Game(int size) {
         this.board = new Board(size);
         this.logic = new GameLogic();
@@ -20,7 +57,13 @@ public class Game {
         this.currentState = blackState;
     }
 
-    // Punkt wjescia z zewnatrz
+
+    /** 
+     * Metoda umieszczająca kamień na planszy gry.
+     * @param x Współrzędna x ruchu.
+     * @param y Współrzędna y ruchu.
+     * @return true jeśli ruch był poprawny i wykonany, false w przeciwnym wypadku.
+    */
     public synchronized boolean putStone(int x, int y) {
         if (gameFinished) {
             return false;
@@ -34,7 +77,11 @@ public class Game {
         return result;
     }
 
-
+    /** 
+     * Metoda obsługująca ruch "pass" (poddanie tury) w grze.
+     * @param playerColor Kolor kamienia gracza wykonującego ruch.
+     * @return Obiekt MoveResult zawierający wynik ruchu.
+    */
     public synchronized MoveResult pass(Stone playerColor) {
         if (!isTurn(playerColor)) {
             return new MoveResult(MoveCode.NOT_YOUR_TURN, new int[0][], "Nie twoja tura!");
@@ -69,7 +116,11 @@ public class Game {
         return new MoveResult(MoveCode.PASS, new int[0][], "Gracz " + playerColor + " spasował.");
     }
 
-
+    /** 
+     * Metoda obsługująca poddanie się gracza w grze.
+     * @param playerColor Kolor kamienia gracza poddającego się.
+     * @return Obiekt MoveResult zawierający wynik poddania się.
+    */
     public synchronized MoveResult surrender(Stone playerColor) {
         gameFinished = true;
         String winner;
@@ -83,6 +134,11 @@ public class Game {
         return new MoveResult(MoveCode.SURRENDER, new int[0][], "Gracz " + playerColor + " poddał się! Wygrywa " + winner + ".");
     }
 
+    /** 
+     * Metoda sprawdzająca, czy jest tura gracza o podanym kolorze.
+     * @param color Kolor kamienia gracza.
+     * @return true jeśli jest tura gracza o podanym kolorze, false w przeciwnym wypadku.
+    */
     public synchronized boolean isTurn(Stone color) {
         if (color == null) {
             return false;
@@ -96,17 +152,53 @@ public class Game {
         return false;
     }
 
+    /** 
+     * Metoda ustawiająca wiadomość zwrotną gry.
+     * @param message Wiadomość do ustawienia.
+    */
     public void setMessage(String message) { this.response = message; }
     public String getMessage() { return response; }
+    /** 
+     * Metoda ustawiająca aktualny stan gry.
+     * @param newState Nowy stan gry do ustawienia.
+    */
     public void setState(GameState newState) { this.currentState = newState; }
+    /** 
+     * Metoda ustawiająca wynik ostatniego ruchu.
+     * @param result Obiekt MoveResult do ustawienia jako wynik ostatniego ruchu.
+    */
     public void setLastMoveResult(MoveResult result) { this.lastMoveResult = result; }
 
+
+    /**
+     * Metoda zwracająca stan gracza czarnego.
+     * @return Stan gracza czarnego.
+     */
     public GameState getBlackState() { return blackState; }
+    /**
+     * Metoda zwracająca stan gracza białego.
+     * @return Stan gracza białego.
+     */
     public GameState getWhiteState() { return whiteState; }
+    /** 
+     * Metoda zwracająca planszę gry.
+     * @return Obiekt Board reprezentujący planszę gry.
+    */
     public Board getBoard() { return board; }
+    /** 
+     * Metoda zwracająca logikę gry.
+     * @return Obiekt GameLogic reprezentujący logikę gry.
+    */
     public GameLogic getLogic() { return logic; }
+    /**
+     * Metoda zwracająca wynik ostatniego ruchu.
+     * @return Obiekt MoveResult reprezentujący wynik ostatniego ruchu.
+     */
     public MoveResult getLastMoveResult() { return lastMoveResult; }
 
+    /** 
+     * Metoda resetująca licznik kolejnych spasowań.
+    */
     public synchronized void resetPassCounter() {
         this.consecutivePasses = 0;
     }

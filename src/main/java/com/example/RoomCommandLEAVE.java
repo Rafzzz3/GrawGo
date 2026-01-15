@@ -1,9 +1,22 @@
+/**
+ * @authors @Rafzzz3 i @paw08i
+ * @version 1.0
+ */
 package com.example;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Klasa obsługująca polecenie LEAVE do opuszczenia pokoju gry.
+ */
 public class RoomCommandLEAVE implements RoomCommandInterfaceExecutor {
+    /** 
+     * Metoda wykonująca polecenie LEAVE do opuszczenia pokoju gry.
+     * @param player Obiekt obsługujący klienta, który wysłał polecenie.
+     * @param roomManager Menedżer pokoi gry.
+     * @param args Argumenty polecenia w formie łańcucha znaków (nieużywane).
+    */
     @Override
     public void execute(ClientHandler player, RoomManager roomManager, String args) {
         Room currentRoom = player.getCurrentRoom();

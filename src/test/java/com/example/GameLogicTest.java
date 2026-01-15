@@ -144,6 +144,11 @@ class GameLogicTest {
         board.setStone(0, 1, Stone.BLACK);
         board.setStone(1, 0, Stone.BLACK);
         board.setStone(1, 1, Stone.BLACK);
+        board.setStone(0, 2, Stone.WHITE);
+        board.setStone(1, 2, Stone.WHITE);
+        board.setStone(2, 2, Stone.WHITE);
+        board.setStone(2, 1, Stone.WHITE);
+        board.setStone(2, 0, Stone.WHITE);
         
         // Act
         gameLogic.calculateTerritory(board);

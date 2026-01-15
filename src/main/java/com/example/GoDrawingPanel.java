@@ -1,29 +1,54 @@
+/**
+ * @authors @Rafzzz3 i @paw08i
+ * @version 1.0
+ */
 package com.example;
-
 import java.util.function.Consumer;
-
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import java.util.function.Consumer;
-
+/**
+ * Klasa reprezentująca panel do rysowania planszy gry Go.
+ */
 public class GoDrawingPanel extends Canvas {
+    /** 
+     * @param currentBoard Obiekt Board reprezentujący aktualny stan planszy gry.
+     */
     private Board currentBoard;
+    /** 
+     * Stała określająca margines planszy.
+     */
     private static final int MARGIN = 20;
-
+    /** 
+     * @param onMoveListener Listener wywoływany po wykonaniu ruchu.
+     */
     private Consumer<String> onMoveListener;
-
+    /** 
+     * Konstruktor klasy GoDrawingPanel.
+    */
     public GoDrawingPanel() {
         super(500, 500);
         this.setOnMouseClicked(event -> clickToPlaceStone(event.getX(), event.getY()));
     }
+    /** 
+     * Metoda aktualizująca widok planszy gry na podstawie otrzymanego obiektu Board.
+     * @param board Obiekt Board reprezentujący stan planszy gry.
+    */
     public void updateBoard(Board board) {
         currentBoard = board;
         drawBoard(board);
     }
+    /** 
+     * Metoda ustawiająca listener wywoływany po wykonaniu ruchu.
+     * @param listener Listener do ustawienia.
+    */
     public void setOnMoveListener(Consumer<String> listener) {
         this.onMoveListener = listener;
     }
+    /** 
+     * Metoda rysująca planszę gry na podstawie otrzymanego obiektu Board.
+     * @param board Obiekt Board reprezentujący stan planszy gry.
+    */
     private void drawBoard(Board board) {
         if (currentBoard == null) {
             return;
@@ -59,6 +84,11 @@ public class GoDrawingPanel extends Canvas {
             }
         }
     }
+    /** 
+     * Metoda obsługująca kliknięcie na planszy w celu umieszczenia kamienia.
+     * @param x Współrzędna X kliknięcia.
+     * @param y Współrzędna Y kliknięcia.
+    */
     private void clickToPlaceStone(double x, double y) {
         if (currentBoard == null) {
             return;

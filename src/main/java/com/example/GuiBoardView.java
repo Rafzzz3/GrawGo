@@ -1,3 +1,7 @@
+/**
+ * @authors @Rafzzz3 i @paw08i
+ * @version 1.0
+ */
 package com.example;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -6,18 +10,31 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-
+/**
+    Klasa reprezentująca widok GUI planszy gry.
+ */
 public class GuiBoardView {     
+    /**
+     * @param scene Obiekt Scene reprezentujący scenę GUI planszy gry.
+     */
     private Scene scene;
+    /**
+     * @param socketClient Obiekt SocketClient do komunikacji z serwerem.
+     */
     private SocketClient socketClient;
+    /**
+     * @param drawingPanel Panel do rysowania planszy gry.
+     */
     private GoDrawingPanel drawingPanel;
-    private TextArea infoArea;
+    /**
+     * Konstruktor klasy GuiBoardView.
+     * @param socketClient Obiekt SocketClient do komunikacji z serwerem.
+     */
     public GuiBoardView(SocketClient socketClient) {
         this.socketClient = socketClient;
         BorderPane layout = new BorderPane();
         Button passButton = new Button("Pass");
         Button surrenderButton = new Button("Surrender");
-        layout.setTop(infoArea);
         drawingPanel = new GoDrawingPanel();
         passButton.setOnAction(e -> passTurn());
         surrenderButton.setOnAction(e -> surrenderGame());
@@ -27,18 +44,36 @@ public class GuiBoardView {
         layout.setCenter(drawingPanel);
         scene = new Scene(layout, 600, 600);
     }
+    /**
+     * Zwraca obiekt Scene reprezentujący scenę GUI planszy gry.
+     * @return obiekt sceny.
+     */
     public Scene getScene() {
         return scene;
     }
+    /**
+     * Metoda passTurn() wysyła wiadomość do serwera o spasowaniu tury.
+     */
     public void passTurn() {
         socketClient.getClientSender().sendToGui("PASS");
     }
+    /**
+     * Metoda surrenderGame() wysyła wiadomość do serwera o poddaniu się w grze.
+     */
     public void surrenderGame() {
         socketClient.getClientSender().sendToGui("SURRENDER");
     }
+    /**
+     * Metoda updateBoard() aktualizuje widok planszy gry na podstawie otrzymanego obiektu Board.
+     * @param board Obiekt Board reprezentujący stan planszy gry.
+     */
     public void updateBoard(Board board) {
         Platform.runLater(() -> drawingPanel.updateBoard(board));
     }
+    /**
+     * Metoda handleMoveResult() obsługuje wynik ruchu i wyświetla odpowiednie popupy w zależności od kodu błędu.
+     * @param result Obiekt MoveResult reprezentujący wynik ruchu.
+     */
     public void handleMoveResult(MoveResult result) {
         // Logika wyświetlania popupów w zależności od kodu błędu
         Platform.runLater(() -> {
@@ -74,7 +109,12 @@ public class GuiBoardView {
             }
         });
     }
-
+    /**
+     * Metoda showPopup() wyświetla okno popup z określonym typem i komunikatem.
+     * @param alertType Typ okna popup.
+     * @param title Tytuł okna popup.
+     * @param content Komunikat do wyświetlenia.
+     */
     private void showPopup(AlertType alertType, String title, String content) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);

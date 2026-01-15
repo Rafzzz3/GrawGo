@@ -1,6 +1,16 @@
+/**
+ * @authors @Rafzzz3 i @paw08i
+ * @version 1.0
+ */
 package com.example;
 
 public class RoomCommandCREATE implements RoomCommandInterfaceExecutor {
+    /**
+     * Metoda wykonująca polecenie CREATE do utworzenia nowego pokoju gry.
+     * @param player Obiekt obsługujący klienta, który wysłał polecenie.
+     * @param roomManager Menedżer pokoi gry.
+     * @param args Argumenty polecenia w formie łańcucha znaków (rozmiar planszy).
+     */
     @Override
     public void execute(ClientHandler player, RoomManager roomManager, String args) {
         if (args == null) {

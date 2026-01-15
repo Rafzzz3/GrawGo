@@ -1,3 +1,7 @@
+/**
+ * @authors @Rafzzz3 i @paw08i
+ * @version 1.0
+ */
 package com.example;
 
 import java.util.ArrayList;
@@ -5,17 +9,35 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Klasa odpowiedzialna za logikę gry Go, w tym obsługę ruchów, duszenia kamieni oraz liczenie terytoriów.
+ */
 public class GameLogic {
+    /**
+     * Tablica przechowująca poprzedni stan planszy dla zasady KO.
+     */
     private Stone[][] previousBoard = null;
 
+    /**
+     * Liczba uduszonych kamieni czarnych i białych.
+     */
     private int blackKills = 0;
     private int whiteKills = 0;
 
+    /**
+     * Liczba punktów terytorialnych czarnych i białych.
+     */
     private int blackTerritory = 0;
     private int whiteTerritory = 0;
 
-
-    // Główny punkt wejścia: walidacja, ruch, rollback przy samobójstwie
+    /** 
+     * Metoda wykonująca ruch na planszy gry.
+     * @param board Plansza gry.
+     * @param x Współrzędna x ruchu.
+     * @param y Współrzędna y ruchu.
+     * @param color Kolor kamienia gracza wykonującego ruch.
+     * @return Obiekt MoveResult zawierający wynik ruchu.
+    */
     public MoveResult move(Board board, int x, int y, Stone color) {
         int size = board.getBoardSize();
         if (!isValidPosition(size, x, y)) {
@@ -68,7 +90,14 @@ public class GameLogic {
         return new MoveResult(MoveCode.OK, captured, msg);
     }
 
-
+    /**
+     * Metoda obliczająca uduszone kamienie po wykonaniu ruchu.
+     * @param board Plansza gry.
+     * @param x Współrzędna x ruchu.
+     * @param y Współrzędna y ruchu.
+     * @param color Kolor kamienia gracza wykonującego ruch.
+     * @return Tablica współrzędnych uduszonych kamieni.
+    */
     private int[][] calculateKills(Board board, int x, int y, Stone color) {
         List<int[]> capturedList = new ArrayList<>();
 
@@ -106,7 +135,10 @@ public class GameLogic {
 
 
 
-    // Na koniec gry, liczymy terytoria
+    /**
+     * Metoda obliczająca terytorium dla obu graczy na podstawie aktualnego stanu planszy.
+     * @param board Plansza gry.
+     */
     public void calculateTerritory(Board board) {
         int size = board.getBoardSize();
         boolean[][] visited = new boolean[size][size];
@@ -127,13 +159,25 @@ public class GameLogic {
     }
 
 
-    // Helper
+    /**
+     * Metoda sprawdzająca, czy podane współrzędne są prawidłowe na planszy.
+     * @param size rozmiar planszy
+     * @param x Współrzędna x
+     * @param y Współrzędna y
+     * @return true jeśli współrzędne są prawidłowe, false w przeciwnym wypadku.
+     */
     public boolean isValidPosition(int size, int x, int y) {
         return x >= 0 && x < size && y >= 0 && y < size;
     }
 
 
-
+    /**
+     * Metoda znajdująca wszystkie uduszone kamienie zaczynając od podanej pozycji.
+     * @param board Plansza gry.
+     * @param x Współrzędna x ruchu.
+     * @param y Współrzędna y ruchu.
+     * @return Lista współrzędnych uduszonych kamieni.
+     */
     private List<int[]> suffocatedStones(Board board, int x, int y) {
         int size = board.getBoardSize();
         Stone targetColor = board.getStone(x, y);
@@ -177,8 +221,13 @@ public class GameLogic {
         return group;  //Zwracamy listę do egzekucji.
     }
     
-
-    // To jest nasz BFS (Flood Fill) sprawdzający jedną zamkniętą strefę
+    /**
+     * Metoda Flood Fill (BFS) w celu określenia terytorium.
+     * @param board Plansza gry.
+     * @param startX Współrzędna x startu.
+     * @param startY Współrzędna y startu.
+     * @param visited Tablica odwiedzonych pól.
+     */
     private void floodAlg(Board board, int startX, int startY, boolean[][] visited) {
         int size = board.getBoardSize();
 
@@ -234,7 +283,11 @@ public class GameLogic {
         // 0 punktów jeśli dotyka obu lub żadnego koloru
     }
 
-
+    /**
+     * Metoda tworząca głęboką kopię planszy gry.
+     * @param board Plansza gry.
+     * @return Głęboka kopia planszy gry.
+     */
     private Stone[][] deepCopyBoard(Board board) {
         int size = board.getBoardSize();
         Stone[][] copy = new Stone[size][size];
@@ -246,6 +299,12 @@ public class GameLogic {
         return copy;
     }
 
+    /**
+     * Metoda sprawdzająca, czy dwie plansze są identyczne.
+     * @param board1 Pierwsza plansza gry.
+     * @param currentBoard Druga plansza gry.
+     * @return true jeśli plansze są identyczne, false w przeciwnym wypadku.
+     */
     private boolean areBoardsEqual(Stone[][] board1, Board currentBoard) {
         int size = currentBoard.getBoardSize();
         for (int i = 0; i < size; i++) {
@@ -258,7 +317,11 @@ public class GameLogic {
         return true;
     }
 
-    // przywracanie planszy z backupu
+    /**
+     * Metoda przywracająca stan planszy z kopii zapasowej.
+     * @param board Plansza gry.
+     * @param backup Kopia zapasowa planszy gry.
+     */
     private void restoreBoard(Board board, Stone[][] backup) {
         int size = board.getBoardSize();
         for(int i=0; i<size; i++) {
@@ -272,19 +335,34 @@ public class GameLogic {
 
 
 
-    // Gettery
+    /**
+     * Metoda zwracająca liczbę uduszonych kamieni czarnych.
+     * @return Liczba uduszonych kamieni czarnych.
+     */
     public int getBlackKills() {
         return blackKills;
     }
 
+    /**
+     * Metoda zwracająca liczbę uduszonych kamieni białych.
+     * @return Liczba uduszonych kamieni białych.
+     */
     public int getWhiteKills() {
         return whiteKills;
     }
 
+    /**
+     * Metoda zwracająca liczbę punktów terytorialnych czarnych.
+     * @return Liczba punktów terytorialnych czarnych.
+     */
     public int getBlackTerritory() {
         return blackTerritory;
     }
 
+    /**
+     * Metoda zwracająca liczbę punktów terytorialnych białych.
+     * @return Liczba punktów terytorialnych białych.
+     */
     public int getWhiteTerritory() {
         return whiteTerritory;
     }

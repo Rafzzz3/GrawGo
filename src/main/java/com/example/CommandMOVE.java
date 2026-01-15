@@ -1,7 +1,20 @@
+/**
+ * @authors @Rafzzz3 i @paw08i
+ * @version 1.0
+ */
 package com.example;
 
+/** 
+ * Klasa odpowiedzialna za wykonanie polecenia ruchu w grze.
+ */
 public class CommandMOVE implements CommandInterfaceExecutor {
 
+    /** 
+     * Metoda wykonująca polecenie ruchu w grze.
+     * @param game Obiekt gry, na którym wykonywane jest polecenie ruchu.
+     * @param args Argumenty polecenia w formie łańcucha znaków (współrzędne ruchu).
+     * @param player Obiekt obsługujący klienta, który wysłał polecenie.
+    */
     @Override
     public void execute(Game game, String args, ClientHandler player) {
         String[] parts = args.trim().split("\\s+");

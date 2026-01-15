@@ -1,6 +1,19 @@
+/**
+ * @authors @Rafzzz3 i @paw08i
+ * @version 1.0
+ */
 package com.example;
 
+/**
+ * Klasa obsługująca polecenie JOIN do dołączenia do istniejącego pokoju gry.
+ */
 public class RoomCommandJOIN implements RoomCommandInterfaceExecutor {
+    /**
+     * Metoda wykonująca polecenie JOIN do dołączenia do istniejącego pokoju gry.
+     * @param player Obiekt obsługujący klienta, który wysłał polecenie.
+     * @param roomManager Menedżer pokoi gry.
+     * @param args Argumenty polecenia w formie łańcucha znaków (ID pokoju).
+     */
     @Override
     public void execute(ClientHandler player, RoomManager roomManager, String args) {
         try {

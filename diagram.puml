@@ -1,0 +1,218 @@
+@startuml
+
+' Ustawienia graficzne
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+' Kolory dla lepszego odróżnienia modułów
+skinparam package {
+    BackgroundColor<<GameLogic>> PaleGreen
+    BackgroundColor<<Server>> LightBlue
+    BackgroundColor<<Client>> LightYellow
+    BackgroundColor<<GUI>> Plum
+    BackgroundColor<<Commands>> Wheat
+}
+
+
+package "Core Game Logic" <<GameLogic>> {
+    enum Stone {
+        BLACK
+        WHITE
+        EMPTY
+    }
+
+    enum MoveCode {
+        OK, INVALID_POSITION, OCCUPIED,
+        SUICIDE, KO, NOT_YOUR_TURN,
+        PASS, SURRENDER, GAME_OVER
+    }
+
+    class MoveResult {
+        + MoveCode code
+        + int[][] captured
+        + String message
+    }
+
+    class Board {
+        - int board_size
+        - Stone[][] table
+        + Stone getStone(int, int)
+        + void setStone(int, int, Stone)
+    }
+
+    class Game {
+        - Board board
+        - GameLogic logic
+        - GameState currentState
+        + boolean putStone(int, int)
+        + MoveResult pass(Stone)
+        + MoveResult surrender(Stone)
+    }
+
+    class GameLogic {
+        - int blackKills
+        - int whiteKills
+        + MoveResult move(Board, int, int, Stone)
+        + void calculateTerritory(Board)
+    }
+
+    ' Wzorzec Stan (State)
+    interface GameState {
+        + boolean stateMove(Game, int, int)
+    }
+    class Turn
+    class BlackTurnState
+    class WhiteTurnState
+
+    Game *-- Board
+    Game *-- GameLogic
+    Game o-- GameState
+    Turn <|-- BlackTurnState
+    Turn <|-- WhiteTurnState
+    GameState <|.. BlackTurnState
+    GameState <|.. WhiteTurnState
+}
+
+
+package "Server Side" <<Server>> {
+    class SocketServer {
+        - int port
+        + void listen()
+    }
+
+    class ClientThreadHandler {
+        + void handleClient(Runnable)
+    }
+
+    class RoomManager {
+        - Map<Integer, Room> rooms
+        + Room createRoom(int)
+    }
+
+    class Room {
+        - int id
+        - Game game
+        - List<ClientHandler> players
+        + void addPlayer(ClientHandler)
+    }
+
+    class ClientHandler implements Runnable {
+        - Socket socket
+        - Room currentRoom
+        + void run()
+    }
+
+    class ServerSender {
+        + void sendMessage(String)
+        + void sendObject(Object)
+    }
+
+    SocketServer --> RoomManager
+    SocketServer --> ClientThreadHandler
+    RoomManager o-- Room
+    Room *-- Game : "has game"
+    Room o-- ClientHandler : "contains players"
+    ClientHandler --> RoomManager
+    ClientHandler --> ServerSender
+}
+
+
+package "Command System" <<Commands>> {
+    
+    ' Komendy Gry
+    class GameCommandInterpreter {
+        + void interpret(Game, String, ClientHandler)
+    }
+    interface CommandInterfaceExecutor {
+        + void execute(Game, String, ClientHandler)
+    }
+    class CommandMOVE implements CommandInterfaceExecutor
+    class GameCommandPASS implements CommandInterfaceExecutor
+    class GameCommandSURRENDER implements CommandInterfaceExecutor
+
+    ' Komendy Pokoju
+    class RoomCommandInterpreter {
+        + void interpret(RoomManager, ClientHandler, String)
+    }
+    interface RoomCommandInterfaceExecutor {
+        + void execute(ClientHandler, RoomManager, String)
+    }
+    class RoomCommandCREATE implements RoomCommandInterfaceExecutor
+    class RoomCommandJOIN implements RoomCommandInterfaceExecutor
+    class RoomCommandLIST implements RoomCommandInterfaceExecutor
+    class RoomCommandREADY implements RoomCommandInterfaceExecutor
+    class RoomCommandLEAVE implements RoomCommandInterfaceExecutor
+
+    GameCommandInterpreter o-- CommandInterfaceExecutor
+    RoomCommandInterpreter o-- RoomCommandInterfaceExecutor
+    
+    ' Powiązanie Handlera z interpreterami
+    ClientHandler --> GameCommandInterpreter
+    ClientHandler --> RoomCommandInterpreter
+}
+
+
+package "Client Network" <<Client>> {
+    class SocketClient {
+        + void connect()
+        + void close()
+    }
+
+    class ClientSender {
+        + void sendToGui(String)
+    }
+
+    class ClientReceiver implements Runnable {
+        + void run()
+    }
+
+    SocketClient *-- ClientSender
+    SocketClient *-- ClientReceiver
+}
+
+
+package "User Interface (GUI)" <<GUI>> {
+    enum LobbyMessageType {
+        ALERT, INFO, ERROR
+    }
+
+    interface GuiListner {
+        + void forMessage(String)
+        + void forBoard(Board)
+        + void forMoveResult(MoveResult)
+    }
+
+    class GameApp {
+        + void start(Stage)
+    }
+
+    class GuiLobbyView {
+        + void refreshRoomList()
+    }
+
+    class GuiRoomView {
+        + void readyRoom()
+    }
+
+    class GuiBoardView {
+        + void updateBoard(Board)
+    }
+
+    class GoDrawingPanel {
+        + void updateBoard(Board)
+    }
+
+    GameApp --|> javafx.application.Application
+    GameApp ..|> GuiListner
+    
+    GameApp *-- SocketClient : "uses"
+    GameApp *-- GuiLobbyView
+    GameApp *-- GuiBoardView
+    GameApp *-- GuiRoomView
+    
+    GuiBoardView *-- GoDrawingPanel
+    ClientReceiver o-- GuiListner : "updates GUI"
+}
+
+@enduml

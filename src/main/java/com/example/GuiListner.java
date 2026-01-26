@@ -30,4 +30,5 @@ public interface GuiListner {
     void forMoveResult(MoveResult result);
     void forJoinedRoom(int roomId);
     void forExitRoom();
+    void forHistoryMove(HistoryMove move);
 }

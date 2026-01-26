@@ -4,6 +4,9 @@
  */
 package com.example;
 
+import java.util.List;
+import java.util.ArrayList;
+
 /**
  * Klasa reprezentująca grę Go, zarządzająca stanem gry, planszą oraz logiką gry (wzorzec projektowy Facade).
  */
@@ -45,6 +48,8 @@ public class Game {
     */
     private GameState currentState;
 
+    private final List<HistoryMove> matchHistory;
+
     /** 
      * Konstruktor klasy Game.
      * @param size Rozmiar planszy gry.
@@ -54,6 +59,7 @@ public class Game {
         this.logic = new GameLogic();
         this.blackState = new BlackTurnState();
         this.whiteState = new WhiteTurnState();
+        this.matchHistory = new ArrayList<>();
         this.currentState = blackState;
     }
 
@@ -169,6 +175,10 @@ public class Game {
     */
     public void setLastMoveResult(MoveResult result) { this.lastMoveResult = result; }
 
+    public synchronized void addToHistory(int x, int y, Stone color, MoveResult result) {
+        matchHistory.add(new HistoryMove(x, y, color, result));
+    }
+
 
     /**
      * Metoda zwracająca stan gracza czarnego.
@@ -195,6 +205,17 @@ public class Game {
      * @return Obiekt MoveResult reprezentujący wynik ostatniego ruchu.
      */
     public MoveResult getLastMoveResult() { return lastMoveResult; }
+
+    public synchronized HistoryMove getHistoryDelta(int index) {
+        if (index >= 0 && index < matchHistory.size()) {
+            return matchHistory.get(index);
+        }
+        return null;
+    }
+
+    public int getHistorySize() {
+        return matchHistory.size();
+    }
 
     /** 
      * Metoda resetująca licznik kolejnych spasowań.

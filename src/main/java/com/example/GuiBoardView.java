@@ -4,8 +4,10 @@
  */
 package com.example;
 import javafx.application.Platform;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Alert;
@@ -13,7 +15,13 @@ import javafx.scene.control.Button;
 /**
     Klasa reprezentująca widok GUI planszy gry.
  */
-public class GuiBoardView {     
+public class GuiBoardView {    
+    private int currentViewIndex = -1; // -1 to live
+    private int headIndex = -1; // Najnowszy ruch w historii
+    private boolean waitingForDelta = false;
+    private boolean lastActionWasUndo = false;
+    private Board currentBoard;
+
     /**
      * @param scene Obiekt Scene reprezentujący scenę GUI planszy gry.
      */
@@ -35,14 +43,49 @@ public class GuiBoardView {
         BorderPane layout = new BorderPane();
         Button passButton = new Button("Pass");
         Button surrenderButton = new Button("Surrender");
+        Button prevButton = new Button("<-");
+        Button nextButton = new Button("->");
         drawingPanel = new GoDrawingPanel();
+
         passButton.setOnAction(e -> passTurn());
         surrenderButton.setOnAction(e -> surrenderGame());
-        drawingPanel.setOnMoveListener(command -> socketClient.getClientSender().sendToGui(command));
+        prevButton.setOnAction(e -> requestPrev());
+        nextButton.setOnAction(e -> requestNext());
+
+        drawingPanel.setOnMoveListener(command -> {
+            // Blokada stawiania kamieni w przeszłości
+            if (currentViewIndex != headIndex) { 
+                 return;
+            }
+            socketClient.getClientSender().sendToGui(command);
+        });
         layout.setLeft(passButton);
         layout.setRight(surrenderButton);
         layout.setCenter(drawingPanel);
+
+        HBox historyBox = new HBox(10, prevButton, nextButton);
+        historyBox.setAlignment(Pos.CENTER);
+        layout.setBottom(historyBox);
+
         scene = new Scene(layout, 600, 600);
+    }
+
+    private void requestPrev() {
+        if (!waitingForDelta) {
+            if (currentViewIndex <= 0) return;
+
+            waitingForDelta = true;
+            lastActionWasUndo = true;
+            socketClient.getClientSender().sendToGui("FETCH_DELTA " + (currentViewIndex - 1));
+        }
+    }
+
+    private void requestNext() {
+        if (!waitingForDelta && currentViewIndex < headIndex) {
+            waitingForDelta = true;
+            lastActionWasUndo = false;
+            socketClient.getClientSender().sendToGui("FETCH_DELTA " + currentViewIndex);
+        }
     }
     /**
      * Zwraca obiekt Scene reprezentujący scenę GUI planszy gry.
@@ -68,8 +111,75 @@ public class GuiBoardView {
      * @param board Obiekt Board reprezentujący stan planszy gry.
      */
     public void updateBoard(Board board) {
-        Platform.runLater(() -> drawingPanel.updateBoard(board));
+        Platform.runLater(() -> {
+            this.currentBoard = board;
+            this.headIndex++;
+            this.currentViewIndex = this.headIndex;
+            drawingPanel.updateBoard(board);
+            });
     }
+
+    /**
+     * Metoda wywoływana przez GameApp -> ClientReceiver, gdy przyjdzie paczka z historią.
+     */
+    public void handleHistoryDelta(HistoryMove move) {
+        waitingForDelta = false; // Odblokowujemy przyciski
+
+        Platform.runLater(() -> {
+            if (move == null) {
+                System.out.println("Brak historii lub koniec zakresu.");
+                return;
+            }
+            
+            if (currentBoard == null) return; 
+
+            if (lastActionWasUndo) {
+                currentBoard.setStone(move.x, move.y, Stone.EMPTY);
+                restoreCaptives(move);
+                
+                currentViewIndex--; 
+
+            } else {
+                // redo
+                currentBoard.setStone(move.x, move.y, move.playerColor);
+                removeCaptives(move);
+                
+                currentViewIndex++;
+            }
+
+            drawingPanel.updateBoard(currentBoard);
+            System.out.println("Widok historii: " + currentViewIndex + " / " + headIndex);
+        });
+    }
+
+    private void restoreCaptives(HistoryMove move) {
+        if (move.result.captured == null || move.result.captured.length == 0) return;
+
+        Stone deadColor;
+        if (move.playerColor == Stone.BLACK) {
+            deadColor = Stone.WHITE;
+        } else {
+            deadColor = Stone.BLACK;
+        }
+
+        for (int[] pos : move.result.captured) {
+            int realX = pos[0] - 1;
+            int realY = pos[1] - 1;
+            currentBoard.setStone(realX, realY, deadColor);
+        }
+    }
+
+    private void removeCaptives(HistoryMove move) {
+        if (move.result.captured == null || move.result.captured.length == 0) return;
+
+        for (int[] pos : move.result.captured) {
+            int realX = pos[0] - 1;
+            int realY = pos[1] - 1;
+            currentBoard.setStone(realX, realY, Stone.EMPTY);
+        }
+    }
+
+
     /**
      * Metoda handleMoveResult() obsługuje wynik ruchu i wyświetla odpowiednie popupy w zależności od kodu błędu.
      * @param result Obiekt MoveResult reprezentujący wynik ruchu.

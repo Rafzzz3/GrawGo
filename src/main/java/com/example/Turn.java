@@ -14,6 +14,7 @@ public class Turn {
      */
     public boolean internalMove(Game game, int x, int y, Stone color) {
         MoveResult r = game.getLogic().move(game.getBoard(), x, y, color);
+        game.addToHistory(x, y, color, r);
 
         game.setLastMoveResult(r);
 

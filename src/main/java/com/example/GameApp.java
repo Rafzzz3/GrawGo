@@ -154,4 +154,13 @@ public class GameApp extends Application implements GuiListner {
             lobbyView.refreshRoomList();
         });
     }
+
+@Override
+    public void forHistoryMove(HistoryMove move) {
+        Platform.runLater(() -> {
+            if (gameStarted && boardView != null) {
+                boardView.handleHistoryDelta(move);
+            }
+        });
+    }
 }

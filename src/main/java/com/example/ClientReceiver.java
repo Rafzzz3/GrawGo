@@ -41,6 +41,14 @@ public class ClientReceiver implements Runnable {
         while (true) {
             try {
                 Object receivedObject = input.readObject();
+                if (receivedObject == null) {
+                    System.out.println("SERWER: Otrzymano null (brak historii/koniec zakresu)");
+                    if (listener != null) {
+                        // Przekazujemy null, żeby GuiBoardView ustawiło waitingForDelta = false
+                        listener.forHistoryMove(null); 
+                    }
+                    continue;
+                }
                 if (receivedObject instanceof String) {
                     String message = (String) receivedObject;
                     if (message.startsWith("JOINED_ROOM ")) {
@@ -76,6 +84,11 @@ public class ClientReceiver implements Runnable {
                     List<String> lobbyList = (List<String>) receivedObject;
                     if (listener != null) {
                         listener.forLobbyList(lobbyList);
+                    }
+                } else if (receivedObject instanceof HistoryMove) {
+                    HistoryMove historyMove = (HistoryMove) receivedObject;
+                    if (listener != null) {
+                        listener.forHistoryMove(historyMove);
                     }
                 }
                 System.out.println("SERWER:");

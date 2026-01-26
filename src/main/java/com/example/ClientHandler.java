@@ -75,6 +75,21 @@ public class ClientHandler implements Runnable {
             while (!socket.isClosed()) {
                 String clientcommand = (String) input.readObject();
                 System.out.println("Otrzymano odpowiedź od gracza: " + clientcommand);
+                if (clientcommand.startsWith("FETCH_DELTA")) {
+                    try {
+                        String[] parts = clientcommand.split(" ");
+                        int index = Integer.parseInt(parts[1]);
+
+                        if (currentRoom != null && currentRoom.getGame() != null) {
+                            HistoryMove delta = currentRoom.getGame().getHistoryDelta(index);
+                            this.serverSender.sendObject(delta);
+                            System.out.println("-> Wysłano do klienta deltę nr " + index);
+                        }
+                    } catch (Exception e) {
+                        System.out.println("Błąd pobierania delty: " + e.getMessage());
+                    }
+                    continue;
+                }
                 if (clientcommand.trim().equals("LEAVE")) {
                     roomCommandInterpreter.interpret(roomManager, this, clientcommand);
                     continue;

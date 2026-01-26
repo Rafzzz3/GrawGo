@@ -152,6 +152,7 @@ public class GameApp extends Application implements GuiListner {
             mainStage.setScene(lobbyView.getScene());
             mainStage.setTitle("Gra Go - Lobby");
             lobbyView.refreshRoomList();
+            boardView.reset();
         });
     }
 

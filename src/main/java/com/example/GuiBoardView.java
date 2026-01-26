@@ -115,8 +115,12 @@ public class GuiBoardView {
             this.currentBoard = board;
             this.headIndex++;
             this.currentViewIndex = this.headIndex;
+            
+            this.waitingForDelta = false;
+            this.lastActionWasUndo = false;
+
             drawingPanel.updateBoard(board);
-            });
+        });
     }
 
     /**
@@ -177,6 +181,18 @@ public class GuiBoardView {
             int realY = pos[1] - 1;
             currentBoard.setStone(realX, realY, Stone.EMPTY);
         }
+    }
+
+    /**
+     * Metoda resetująca stan widoku do wartości początkowych.
+     * Należy ją wywołać przy rozpoczęciu nowej gry.
+     */
+    public void reset() {
+        this.currentViewIndex = -1;
+        this.headIndex = -1;
+        this.waitingForDelta = false;
+        this.lastActionWasUndo = false;
+        this.currentBoard = null;
     }
 
 

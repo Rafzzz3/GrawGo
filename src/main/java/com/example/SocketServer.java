@@ -6,6 +6,12 @@ package com.example;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import com.example.config.MongoConfig;
+import com.example.database.GameService;
 /**
     Klasa reprezentująca serwer socketowy, który nasłuchuje na określonym porcie i obsługuje połączenia od klientów.
     Serwer działa w nieskończonej pętli, akceptując nowych klientów i tworząc dla nich ich własnych ClientHandler'ów.
@@ -27,9 +33,13 @@ public class SocketServer {
      * Konstruktor klasy SocketServer.
      * @param port Port, na którym serwer będzie nasłuchiwał połączeń.
      */
-    public SocketServer(int port) {
+
+    private GameService gameService;
+
+    public SocketServer(int port, GameService gameService) {
         this.port = port;
-        this.roomManager = new RoomManager();
+        this.gameService = gameService;
+        this.roomManager = new RoomManager(gameService);
     }
     /**
      * Metoda uruchamiająca serwer i nasłuchująca na połączenia od klientów.
@@ -45,7 +55,7 @@ public class SocketServer {
                 try  {
                     Socket gracz = serverSocket.accept();
                     System.out.println("Podłączono nowego gracza");
-                    ClientHandler clientHandler = new ClientHandler( gracz,  roomManager);
+                    ClientHandler clientHandler = new ClientHandler( gracz,  roomManager, this.gameService);
                     clientThreadHandler.handleClient(clientHandler);
                 }
                 catch (IOException e) {
@@ -63,8 +73,11 @@ public class SocketServer {
      * @param args Argumenty linii poleceń (nieużywane).
      */
     public static void main(String[] args) {
+        ApplicationContext context = new AnnotationConfigApplicationContext(MongoConfig.class);
+        GameService gameService = context.getBean(GameService.class);
+
         int port = 4444;
-        SocketServer server = new SocketServer(port);
+        SocketServer server = new SocketServer(port, gameService);
         server.listen();
     }
 }

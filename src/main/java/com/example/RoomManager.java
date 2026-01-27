@@ -6,6 +6,8 @@ package com.example;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import com.example.database.GameService;
 /**
     Klasa zarządzająca pokojami gier i graczami.
     Umożliwia tworzenie, wyszukiwanie i usuwanie pokoi oraz pobieranie listy dostępnych pokoi.
@@ -21,6 +23,14 @@ public class RoomManager {
      * @return obecny identyfikator pokoju.
     */
     private int currentRoomId  = 1;
+
+    private GameService gameService;
+
+    // Konstruktor
+    public RoomManager(GameService gameService) {
+        this.gameService = gameService;
+    }
+
     /**
      * Tworzy nowy pokój gry o określonym rozmiarze i zwraca go.
      * @param size Rozmiar planszy gry.

@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+
+import com.example.database.GameService;
 /**
     Klasa reprezentująca obsługę klienta na serwerze.
     Odpowiada za komunikację z klientem, przetwarzanie komend oraz zarządzanie stanem gry i pokoju 
@@ -50,14 +52,18 @@ public class ClientHandler implements Runnable {
      * @param commandInterpreter Obiekt GameCommandInterpreter do interpretacji komend związanych z grą.
      */
     private GameCommandInterpreter commandInterpreter;
+    
+    private GameService gameService;
+    
     /**
      * Konstruktor klasy ClientHandler.
      * @param socket Socket używany do komunikacji z klientem.
      * @param roomManager Obiekt RoomManager zarządzający pokojami na serwerze.
      */
-    public ClientHandler( Socket socket, RoomManager roomManager) {
+    public ClientHandler( Socket socket, RoomManager roomManager, GameService gameService) {
         this.socket = socket;
         this.roomManager = roomManager;
+        this.gameService = gameService;
         this.commandInterpreter = new GameCommandInterpreter();
         this.roomCommandInterpreter = new RoomCommandInterpreter(roomManager, this);
     }

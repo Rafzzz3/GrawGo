@@ -42,11 +42,11 @@ public class ClientReceiver implements Runnable {
             try {
                 Object receivedObject = input.readObject();
                 if (receivedObject == null) {
-                    System.out.println("SERWER: Otrzymano null (brak historii/koniec zakresu)");
-                    if (listener != null) {
-                        // Przekazujemy null, żeby GuiBoardView ustawiło waitingForDelta = false
-                        listener.forHistoryMove(null); 
-                    }
+                    // System.out.println("SERWER: Otrzymano null (brak historii/koniec zakresu)");
+                    // if (listener != null) {
+                    //     // Przekazujemy null, żeby GuiBoardView ustawiło waitingForDelta = false
+                    //     listener.forHistoryMove(null); 
+                    // }
                     continue;
                 }
                 if (receivedObject instanceof String) {

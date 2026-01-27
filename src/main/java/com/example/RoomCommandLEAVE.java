@@ -25,16 +25,21 @@ public class RoomCommandLEAVE implements RoomCommandInterfaceExecutor {
             others.remove(player);
             currentRoom.removePlayer(player);
             player.setCurrentRoom(null);
+            player.setState(ClientState.LOBBY);
             player.getServerSender().sendMessage("EXIT_ROOM");
+
             for (ClientHandler opponent : others) {
                 opponent.getServerSender().sendMessage(LobbyMessageType.INFO.name() + ": Przeciwnik opuścił pokój. Koniec gry.");
                 currentRoom.removePlayer(opponent);
                 opponent.setCurrentRoom(null);
+                opponent.setState(ClientState.LOBBY);
                 opponent.getServerSender().sendMessage("EXIT_ROOM");
             }
+
             if (currentRoom.getPlayerCount() == 0) {
                 roomManager.removeRoom(currentRoom.getId());   
             }
+
             player.getServerSender().sendMessage("EXIT_ROOM");
         } 
     }

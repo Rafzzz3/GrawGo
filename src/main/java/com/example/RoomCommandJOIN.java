@@ -24,8 +24,10 @@ public class RoomCommandJOIN implements RoomCommandInterfaceExecutor {
             }
             else {
                 message = LobbyMessageType.INFO.name() + ": Dołączyłeś do pokoju: " + room.getId();
+                player.setState(ClientState.ROOM);
                 player.setCurrentRoom(room);
                 room.addPlayer(player);
+                
                 if (player.getPlayerColor() == Stone.BLACK) {
                     message += "\nMasz czarny kolor. Zaczynasz grę.";
                 } else {

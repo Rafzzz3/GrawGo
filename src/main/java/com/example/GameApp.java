@@ -17,6 +17,7 @@ public class GameApp extends Application implements GuiListner {
     /**
      * @param lobbyview Obiekt GuiLobbyView odpowiedzialny za widok gui w lobby
      */
+    private GuiAnalyzeView analyzeView;
     private GuiLobbyView lobbyView;
     /**
      * @param boardView Obiekt GuiBoardView odpowiedzialny za widok gui w trakcie gry
@@ -58,6 +59,7 @@ public class GameApp extends Application implements GuiListner {
         }
         lobbyView = new GuiLobbyView(socketClient);
         boardView = new GuiBoardView(socketClient);
+        analyzeView = new GuiAnalyzeView(socketClient);
         try {
             if (socketClient.getClientReceiver() != null) {
                 socketClient.getClientReceiver().setListener(this);
@@ -156,12 +158,20 @@ public class GameApp extends Application implements GuiListner {
         });
     }
 
-@Override
+    @Override
     public void forHistoryMove(HistoryMove move) {
         Platform.runLater(() -> {
             if (gameStarted && boardView != null) {
                 boardView.handleHistoryDelta(move);
             }
+        });
+    }
+    @Override
+    public void forAnalyzeGame(List<String> gameList) {
+        Platform.runLater(() -> {
+            analyzeView.updateGameList(gameList);
+            mainStage.setScene(analyzeView.getScene());
+            mainStage.setTitle("Archiwum rozegranych gier");
         });
     }
 }

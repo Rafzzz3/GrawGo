@@ -23,7 +23,7 @@ public class ClientHandler implements Runnable {
     /**
      * @param state odpowiedzialny za stan klienta. Domyślnie gracz jest w menu.
      */
-    private ClientState state = ClientState.MENU;
+    private ClientHandlerState currentState;
     /**
      * @param currentRoom Obiekt Room reprezentujący pokój, do którego należy klient.
      */
@@ -57,9 +57,11 @@ public class ClientHandler implements Runnable {
      * @param commandInterpreter Obiekt GameCommandInterpreter do interpretacji komend związanych z grą.
      */
     private GameCommandInterpreter commandInterpreter;
-    
+    private final ClientHandlerState lobbyState;
+    private final ClientHandlerState roomState;
+    private final ClientHandlerState gameState;
+    private final ClientHandlerState analyzeState;
     private GameService gameService;
-    
     /**
      * Konstruktor klasy ClientHandler.
      * @param socket Socket używany do komunikacji z klientem.
@@ -69,9 +71,13 @@ public class ClientHandler implements Runnable {
         this.socket = socket;
         this.roomManager = roomManager;
         this.gameService = gameService;
-        this.analyzeCommandInterpreter = new AnalyzeCommandInterpreter();
-        this.commandInterpreter = new GameCommandInterpreter();
-        this.roomCommandInterpreter = new RoomCommandInterpreter(roomManager, this);
+        
+        this.lobbyState = new InLobbyState(roomManager, this);
+        this.roomState = new InRoomState(this, roomManager);
+        this.gameState = new InGameState();
+        this.analyzeState = new InAnalyzeState();
+
+        this.currentState = new InMenuState();
     }
     /**
      * Metoda run() uruchamia pętlę odbierającą komendy od klienta i przetwarzającą je.
@@ -83,89 +89,12 @@ public class ClientHandler implements Runnable {
         try {
             this.serverSender = new ServerSender(new ObjectOutputStream(socket.getOutputStream()));
             input = new ObjectInputStream(socket.getInputStream());
-            serverSender.sendMessage("Witaj na serwerze. Dostępne komendy pokoju to: CREATE, LIST, JOIN.");
+            serverSender.sendMessage("Witaj na serwerze.");
             while (!socket.isClosed()) {
                 String clientcommand = (String) input.readObject();
                 System.out.println("Otrzymano odpowiedź od gracza: " + clientcommand);
-                if (clientcommand.startsWith("FETCH_DELTA")) {
-                    try {
-                        String[] parts = clientcommand.split(" ");
-                        int index = Integer.parseInt(parts[1]);
+                currentState.handleMessage(this,clientcommand);
 
-                        if (currentRoom != null && currentRoom.getGame() != null) {
-                            HistoryMove delta = currentRoom.getGame().getHistoryDelta(index);
-                            this.serverSender.sendObject(delta);
-                            System.out.println("-> Wysłano do klienta deltę nr " + index);
-                        }
-                    } catch (Exception e) {
-                        System.out.println("Błąd pobierania delty: " + e.getMessage());
-                    }
-                    continue;
-                }
-                if (clientcommand.trim().equals("LEAVE")) {
-                    roomCommandInterpreter.interpret(roomManager, this, clientcommand);
-                    continue;
-                }
-                if (currentRoom == null || !currentRoom.isGameStarted()) {
-                    roomCommandInterpreter.interpret(roomManager, this, clientcommand);
-                // } else if (currentRoom.isGameStarted()) {
-                //     game = currentRoom.getGame();
-                //     if (!game.isTurn(getPlayerColor())) {
-                //         serverSender.sendMessage("Nie twoja tura. Czekaj na ruch przeciwnika.");
-                //         continue;
-                //     }
-                //     commandInterpreter.interpret(game, clientcommand, this);
-                //     // odeślij wynik ostatniej komendy gry do klienta
-                //     if (game != null) {
-                //         String message = game.getMessage();
-                //         if (message != null && !message.isEmpty()) {
-                //             serverSender.sendMessage(message);
-                //         }
-                //         for (ClientHandler player : currentRoom.getPlayers()) {
-                //             player.getServerSender().sendObject(game.getBoard());
-                //         }
-                //     }
-                // }
-                } else if (currentRoom.isGameStarted()) {
-                    game = currentRoom.getGame();
-                    
-                    // 1. Sprawdzenie tury
-                    if (!game.isTurn(getPlayerColor())) {
-                        MoveResult notTurnResult = new MoveResult(
-                            MoveCode.NOT_YOUR_TURN, 
-                            new int[0][], 
-                            "Nie twoja tura. Czekaj na ruch przeciwnika."
-                        );
-                        serverSender.sendObject(notTurnResult);
-                        continue; // Przerywamy pętlę
-                    }
-
-                    // 2. Wykonanie ruchu
-                    commandInterpreter.interpret(game, clientcommand, this);
-
-                    // 3. Wysłanie wyniku ruchu
-                    if (game != null && game.getLastMoveResult() != null) {
-        
-                        serverSender.sendObject(game.getLastMoveResult());
-                        if (game.getLastMoveResult().code == MoveCode.SURRENDER || game.getLastMoveResult().code == MoveCode.GAME_OVER) {
-                            for (ClientHandler player : currentRoom.getPlayers()) {
-                                if (player != this) { 
-                                    player.getServerSender().sendObject(game.getLastMoveResult());
-                                }
-                            }
-                        }                        
-                        if (game.getLastMoveResult().code == MoveCode.OK || game.getLastMoveResult().code == MoveCode.PASS) {
-                            for (ClientHandler player : currentRoom.getPlayers()) {
-                                player.getServerSender().sendObject(game.getBoard());
-                                if (game.getLastMoveResult().code == MoveCode.PASS && player != this) {
-                                    player.getServerSender().sendMessage(LobbyMessageType.INFO + ": Przeciwnik spasował.");
-                                }
-                            }
-                        }
-                        
-                        game.setLastMoveResult(null);
-                    }
-                }
             }
         } catch (EOFException e) {
             System.out.println("Gracz rozłączył się.");
@@ -227,7 +156,16 @@ public class ClientHandler implements Runnable {
     public Stone getPlayerColor() {
         return this.playerColor;
     }
-    public void setState(ClientState state) {
-        this.state = state;
+    public void switchToLobbyState() {
+        this.currentState = this.lobbyState;
+    }
+    public void switchToRoomState() {
+        this.currentState = this.roomState;
+    }
+    public void switchToGameState() {
+        this.currentState = this.gameState;
+    }
+    public void switchToAnalyzeState() {
+        this.currentState = this.analyzeState;
     }
 }

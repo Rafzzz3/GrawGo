@@ -68,11 +68,8 @@ public class ClientHandler implements Runnable {
     public ClientHandler( Socket socket, RoomManager roomManager, GameService gameService) {
         this.socket = socket;
         this.roomManager = roomManager;
-<<<<<<< HEAD
         this.gameService = gameService;
-=======
         this.analyzeCommandInterpreter = new AnalyzeCommandInterpreter();
->>>>>>> 8507f4430c4849fd1d488636bfe5795cb3bce20b
         this.commandInterpreter = new GameCommandInterpreter();
         this.roomCommandInterpreter = new RoomCommandInterpreter(roomManager, this);
     }

@@ -57,6 +57,7 @@ public class ClientHandler implements Runnable {
      * @param commandInterpreter Obiekt GameCommandInterpreter do interpretacji komend związanych z grą.
      */
     private GameCommandInterpreter commandInterpreter;
+    private final ClientHandlerState menuState;
     private final ClientHandlerState lobbyState;
     private final ClientHandlerState roomState;
     private final ClientHandlerState gameState;
@@ -76,8 +77,9 @@ public class ClientHandler implements Runnable {
         this.roomState = new InRoomState(this, roomManager);
         this.gameState = new InGameState();
         this.analyzeState = new InAnalyzeState();
+        this.menuState = new InMenuState(roomManager);
 
-        this.currentState = new InMenuState();
+        this.currentState = menuState;
     }
     /**
      * Metoda run() uruchamia pętlę odbierającą komendy od klienta i przetwarzającą je.
@@ -89,7 +91,7 @@ public class ClientHandler implements Runnable {
         try {
             this.serverSender = new ServerSender(new ObjectOutputStream(socket.getOutputStream()));
             input = new ObjectInputStream(socket.getInputStream());
-            serverSender.sendMessage("Witaj na serwerze.");
+            serverSender.sendMessage("Witaj na serwerze: ");
             while (!socket.isClosed()) {
                 String clientcommand = (String) input.readObject();
                 System.out.println("Otrzymano odpowiedź od gracza: " + clientcommand);
@@ -110,7 +112,7 @@ public class ClientHandler implements Runnable {
                 }
                 else {
                     for (ClientHandler player : currentRoom.getPlayers()) {
-                        player.getServerSender().sendMessage(LobbyMessageType.INFO+" Przeciwnik rozłączył się.");
+                        player.getServerSender().sendMessage(LobbyMessageType.INFO+": Przeciwnik rozłączył się.");
                     }
                 }
             }   
@@ -167,5 +169,8 @@ public class ClientHandler implements Runnable {
     }
     public void switchToAnalyzeState() {
         this.currentState = this.analyzeState;
+    }
+    public void switchToMenuState() {
+        this.currentState = this.menuState;
     }
 }

@@ -25,6 +25,7 @@ public class RoomCommandREADY implements RoomCommandInterfaceExecutor {
         player.getServerSender().sendMessage(LobbyMessageType.INFO.name() + ": Gotowy do gry.");
         if (room.isGameStarted()) {
             for (ClientHandler gracz : room.getPlayers()) {
+                gracz.switchToGameState();
                 gracz.getServerSender().sendObject(room.getGame().getBoard());
             }
         }

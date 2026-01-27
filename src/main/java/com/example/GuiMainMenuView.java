@@ -12,14 +12,14 @@ public class GuiMainMenuView {
         VBox layoutBox = new VBox(10);
         Label titleLabel = new Label("Main Menu");
         titleLabel.setStyle("-fx-font-size: 30px; -fx-font-weight: bold;");
-        Button playPlayerButton  = new Button("Create Room");
-        Button playBotButton = new Button("Refresh List");
+        Button playPlayerButton  = new Button("Play vs Player");
+        Button playBotButton = new Button("Play vs Bot");
         Button analyzeGameButton = new Button("Analyze Game");
-        layoutBox.getChildren().addAll(titleLabel, playPlayerButton, playBotButton);
+        layoutBox.getChildren().addAll(titleLabel, playPlayerButton, playBotButton, analyzeGameButton);
         playPlayerButton.setOnAction(e -> playVsPlayer());
         playBotButton.setOnAction(e -> playVsBot());
         analyzeGameButton.setOnAction(e -> analyzeGame());
-        scene = new Scene(layoutBox, 800, 1000); 
+        scene = new Scene(layoutBox, 400, 400); 
     }
     public Scene getScene() {
         return scene;

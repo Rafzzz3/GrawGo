@@ -65,7 +65,18 @@ public class ClientReceiver implements Runnable {
                         if (listener != null) {
                             listener.forExitRoom();
                         }
-                    } else {
+                    } 
+                    else if (message.startsWith("ENTER_LOBBY")) {
+                        if (listener != null) {
+                            listener.forEnterLobby();
+                        }
+                    }
+                    else if (message.startsWith("ENTER_ANALYZE")) {
+                        if (listener != null) {
+                            listener.forEnterAnalyze();
+                        }
+                    }
+                    else {
                         if (listener != null) {
                             listener.forMessage(message);
                         }

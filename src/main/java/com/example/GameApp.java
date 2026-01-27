@@ -17,6 +17,7 @@ public class GameApp extends Application implements GuiListner {
     /**
      * @param lobbyview Obiekt GuiLobbyView odpowiedzialny za widok gui w lobby
      */
+    private GuiMainMenuView mainMenuView;
     private GuiAnalyzeView analyzeView;
     private GuiLobbyView lobbyView;
     /**
@@ -35,6 +36,7 @@ public class GameApp extends Application implements GuiListner {
      * Flaga określająca czy gra została już rozpoczęta
      */
     private boolean gameStarted = false;
+    private boolean inAnalyzeMode = false;
     /**
      * Metoda główna, punkt wejścia do aplikacji
      * @param args Argumenty wiersza poleceń
@@ -57,6 +59,7 @@ public class GameApp extends Application implements GuiListner {
             System.out.println("Błąd podczas łączenia z serwerem: " + e.getMessage());
             return;
         }
+        mainMenuView = new GuiMainMenuView(socketClient);
         lobbyView = new GuiLobbyView(socketClient);
         boardView = new GuiBoardView(socketClient);
         analyzeView = new GuiAnalyzeView(socketClient);
@@ -69,8 +72,7 @@ public class GameApp extends Application implements GuiListner {
             return;
         }
         mainStage.setTitle("Gra Go");
-        mainStage.setScene(lobbyView.getScene());
-        lobbyView.refreshRoomList();
+        mainStage.setScene(mainMenuView.getScene());
         mainStage.setOnCloseRequest(e -> {
             socketClient.close();
             System.exit(0);
@@ -89,7 +91,6 @@ public class GameApp extends Application implements GuiListner {
             }
             else {
                 lobbyView.setMessage(message);
-                lobbyView.refreshRoomList();
             }
         });
     }
@@ -111,12 +112,17 @@ public class GameApp extends Application implements GuiListner {
     }
     /**
      * Obsługuje aktualizację listy dostępnych pokojów w lobby.
-     * @param lobbyList Lista pokojów dostępnych na serwerze
+     * @param list Lista pokojów dostępnych na serwerze
      */
     @Override
-    public void forLobbyList(List<String> lobbyList) {
+    public void forLobbyList(List<String> list) {
         Platform.runLater(() -> {
-            lobbyView.updateRoomList(lobbyList);
+            if (inAnalyzeMode) {
+                analyzeView.updateGameList(list);
+            }
+            else {
+                lobbyView.updateRoomList(list);
+            }
         });
     }
     /**
@@ -157,7 +163,14 @@ public class GameApp extends Application implements GuiListner {
             boardView.reset();
         });
     }
-
+    @Override
+    public void forEnterLobby() {
+        Platform.runLater(() -> {
+            inAnalyzeMode = false; 
+            mainStage.setScene(lobbyView.getScene());
+            mainStage.setTitle("Gra Go - Lobby");
+        });
+    }
     @Override
     public void forHistoryMove(HistoryMove move) {
         Platform.runLater(() -> {
@@ -167,9 +180,9 @@ public class GameApp extends Application implements GuiListner {
         });
     }
     @Override
-    public void forAnalyzeGame(List<String> gameList) {
+    public void forEnterAnalyze() {
         Platform.runLater(() -> {
-            analyzeView.updateGameList(gameList);
+            inAnalyzeMode = true;
             mainStage.setScene(analyzeView.getScene());
             mainStage.setTitle("Archiwum rozegranych gier");
         });

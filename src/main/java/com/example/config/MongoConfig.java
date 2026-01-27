@@ -24,7 +24,7 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
     // polaczenie sie z MongoDB Atlas
     @Override
     public MongoClient mongoClient() {
-        return MongoClients.create("mongodb+srv://admin:tajneHaslo123@cluster0.abcde.mongodb.net/?retryWrites=true&w=majority");
+        return MongoClients.create("");
     }
     
     @Bean

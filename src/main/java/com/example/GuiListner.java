@@ -30,6 +30,7 @@ public interface GuiListner {
     void forMoveResult(MoveResult result);
     void forJoinedRoom(int roomId);
     void forExitRoom();
+    void forEnterLobby();
+    void forEnterAnalyze();
     void forHistoryMove(HistoryMove move);
-    void forAnalyzeGame(List<String> gameList);
 }

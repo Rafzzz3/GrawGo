@@ -27,19 +27,23 @@ public class SocketClient {
      * @throws IOException Jeśli wystąpi błąd podczas nawiązywania połączenia.
      */
     public void connect() throws IOException {
-        new Thread(() -> {
-            try {
-                socket = new Socket("localhost", 4444);
-                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-                ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-                clientSender = new ClientSender(out);
-                clientReceiver = new ClientReceiver(in);
-                new Thread(clientSender).start();
-                new Thread(clientReceiver).start();
-            } catch (IOException e) {
-                System.out.println("Błąd połączenia z serwerem: " + e.getMessage());
-            }
-        }).start();
+        try {
+            socket = new Socket("localhost", 4444);
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+            clientSender = new ClientSender(out);
+            clientReceiver = new ClientReceiver(in);
+            Thread senderThread = new Thread(clientSender);
+            Thread receiverThread = new Thread(clientReceiver);
+
+            senderThread.setDaemon(true);
+            receiverThread.setDaemon(true);
+            
+            senderThread.start();
+            receiverThread.start();
+        } catch (IOException e) {
+            System.out.println("Błąd połączenia z serwerem: " + e.getMessage());
+        }
     }
     /**
      * Zwraca obiekt ClientSender odpowiedzialny za wysyłanie danych do serwera.

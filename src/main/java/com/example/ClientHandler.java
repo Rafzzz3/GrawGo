@@ -21,6 +21,10 @@ public class ClientHandler implements Runnable {
      */
     private Socket socket;
     /**
+     * @param state odpowiedzialny za stan klienta. Domyślnie gracz jest w menu.
+     */
+    private ClientState state = ClientState.MENU;
+    /**
      * @param currentRoom Obiekt Room reprezentujący pokój, do którego należy klient.
      */
     private Room currentRoom = null;
@@ -44,6 +48,7 @@ public class ClientHandler implements Runnable {
      * @param input Obiekt ObjectInputStream używany do odbierania danych od klienta.
      */
     private ObjectInputStream input;
+    private AnalyzeCommandInterpreter analyzeCommandInterpreter;
     /**
      * @param roomCommandInterpreter Obiekt RoomCommandInterpreter do interpretacji komend związanych z pokojem.
      */
@@ -63,7 +68,11 @@ public class ClientHandler implements Runnable {
     public ClientHandler( Socket socket, RoomManager roomManager, GameService gameService) {
         this.socket = socket;
         this.roomManager = roomManager;
+<<<<<<< HEAD
         this.gameService = gameService;
+=======
+        this.analyzeCommandInterpreter = new AnalyzeCommandInterpreter();
+>>>>>>> 8507f4430c4849fd1d488636bfe5795cb3bce20b
         this.commandInterpreter = new GameCommandInterpreter();
         this.roomCommandInterpreter = new RoomCommandInterpreter(roomManager, this);
     }
@@ -220,5 +229,8 @@ public class ClientHandler implements Runnable {
      */
     public Stone getPlayerColor() {
         return this.playerColor;
+    }
+    public void setState(ClientState state) {
+        this.state = state;
     }
 }

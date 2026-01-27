@@ -38,9 +38,11 @@ public class RoomCommandCREATE implements RoomCommandInterfaceExecutor {
 
         Room room = roomManager.createRoom(size);
         player.setCurrentRoom(room);
+        player.setState(ClientState.ROOM);
         room.addPlayer(player);
         player.getServerSender().sendMessage(LobbyMessageType.INFO.name() + ": Utworzono pokój o ID: " + room.getId() + " z rozmiarem planszy: " + size);
         player.getServerSender().sendMessage("JOINED_ROOM " + room.getId());
+
         if (player.getPlayerColor() == Stone.BLACK) {
             player.getServerSender().sendMessage(LobbyMessageType.INFO.name() + ": Masz czarny kolor. Zaczynasz grę.");
         } else {

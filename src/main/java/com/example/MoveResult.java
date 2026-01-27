@@ -13,15 +13,17 @@ public class MoveResult implements Serializable {
     /**
      * Kod wyniku ruchu.
      */
-    public final MoveCode code;
+    public MoveCode code;
     /**
      * Tablica współrzędnych uduszonych kamieni.
      */
-    public final int[][] captured;
+    public int[][] captured;
     /**
      * Komunikat opisujący wynik ruchu.
      */
-    public final String message;
+    public String message;
+    
+    public MoveResult() {}
 
     /**
      * Konstruktor klasy MoveResult.

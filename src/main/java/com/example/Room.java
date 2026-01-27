@@ -7,6 +7,8 @@ package com.example;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import com.example.database.GameService;
 /**
     Klasa reprezentująca pokój gry, zarządzająca stanem gry i kolorami graczy.
  */
@@ -39,14 +41,16 @@ public class Room {
      * @param random Obiekt Random do losowania kolorów graczy.
     */
     private final Random random = new Random();
+    private GameService gameService;
     /**
      * Konstruktor klasy Room.
      * @param id Identyfikator pokoju.
      * @param size Rozmiar planszy gry.
      */
-    public Room(int id, int size) {
+    public Room(int id, int size, GameService gameService) {
         this.id = id;
-        this.game = new Game(size);
+        this.game = new Game(size, gameService);
+        this.gameService = gameService;
     }
     /** 
      * Metoda dodająca gracza do pokoju i przypisująca mu kolor.

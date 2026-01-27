@@ -39,7 +39,7 @@ public class RoomManager {
     public Room createRoom(int size) {
         int roomId =  currentRoomId;
         currentRoomId++;
-        Room newRoom = new Room(roomId, size);
+        Room newRoom = new Room(roomId, size, gameService);
         rooms.put(roomId, newRoom);
         return newRoom;
     }

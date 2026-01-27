@@ -5,6 +5,9 @@
 package com.example;
 
 import java.util.List;
+
+import com.example.database.GameService;
+
 import java.util.ArrayList;
 
 /**
@@ -50,17 +53,21 @@ public class Game {
 
     private final List<HistoryMove> matchHistory;
 
+    private GameService gameService;
+
+
     /** 
      * Konstruktor klasy Game.
      * @param size Rozmiar planszy gry.
     */
-    public Game(int size) {
+    public Game(int size, GameService gameService) {
         this.board = new Board(size);
         this.logic = new GameLogic();
         this.blackState = new BlackTurnState();
         this.whiteState = new WhiteTurnState();
         this.matchHistory = new ArrayList<>();
         this.currentState = blackState;
+        this.gameService = gameService;
     }
 
 
@@ -103,7 +110,16 @@ public class Game {
             logic.calculateTerritory(board);
             int blackScore = logic.getBlackTerritory() + logic.getBlackKills();
             int whiteScore = logic.getWhiteTerritory() + logic.getWhiteKills();
-            
+
+            String winner;
+            if (blackScore > whiteScore) {
+                winner = "Czarny";
+            } else  {
+                winner = "Biały";
+            }
+
+            gameService.saveGame(board.getBoardSize(), winner, this.matchHistory);
+
             // Budujemy wiadomość końcową
             String scoreMsg = "KONIEC GRY (2x PASS).\n" + 
                               "Wynik:\n" + 
@@ -137,6 +153,7 @@ public class Game {
             winner = "Biały";
         }
         
+        gameService.saveGame(board.getBoardSize(), winner, this.matchHistory);
         return new MoveResult(MoveCode.SURRENDER, new int[0][], "Gracz " + playerColor + " poddał się! Wygrywa " + winner + ".");
     }
 

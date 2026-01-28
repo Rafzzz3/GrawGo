@@ -1,7 +1,10 @@
 package com.example;
 
+import java.util.Optional;
+
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 public class GuiMainMenuView {
@@ -28,7 +31,21 @@ public class GuiMainMenuView {
         socketClient.getClientSender().sendToGui("PVP");
     }
     private void playVsBot() {
-        socketClient.getClientSender().sendToGui("PVE");
+        showBotSizeDialog();
+    }
+
+    private void showBotSizeDialog() {
+        ChoiceDialog<String> dialog = new ChoiceDialog<>("19", "9", "13", "19");
+        dialog.setTitle("Gra z Botem");
+        dialog.setHeaderText("Wybierz rozmiar planszy dla bota:");
+        dialog.setContentText("Rozmiar:");
+
+        Optional<String> wynik = dialog.showAndWait();
+        
+        if (wynik.isPresent()) {
+            String rozmiar = wynik.get();
+            socketClient.getClientSender().sendToGui("PVE " + rozmiar);
+        }
     }
     private void analyzeGame() {
         socketClient.getClientSender().sendToGui("ANALYZE");

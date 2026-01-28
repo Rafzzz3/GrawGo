@@ -4,9 +4,11 @@ public class InGameState implements ClientHandlerState {
     private GameCommandInterpreter gameCommandInterpreter;
     private Room room;
     private Game game;
+
     public InGameState() {
         this.gameCommandInterpreter = new GameCommandInterpreter();
     }
+
     @Override
     public void handleMessage(ClientHandler player, String message) {
         room = player.getCurrentRoom();
@@ -26,7 +28,23 @@ public class InGameState implements ClientHandlerState {
         }
         gameCommandInterpreter.interpret(game, message, player);
         handleMoveResult(player, game, room);
+
+        if (room.isBotGame() && game.isTurn(room.getBotColor()) && !message.startsWith("SURRENDER")) {
+            if (game.getLastMoveResult() != null && game.getLastMoveResult().code == MoveCode.GAME_OVER) {
+                return;
+            }
+
+            try {
+                Thread.sleep(1000);     // opoznienie dla bota
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            Bot.getInstance().makeMove(game, room.getBotColor());
+            handleMoveResult(player, game, room);
+        }
     }
+
     private void handleMoveResult(ClientHandler player, Game game, Room currentRoom) {
         if (game != null && game.getLastMoveResult() != null) {
             MoveResult result = game.getLastMoveResult();
@@ -38,7 +56,11 @@ public class InGameState implements ClientHandlerState {
                     if (p != player) { 
                         p.getServerSender().sendObject(result);
                     }
-                    p.switchToRoomState();
+                    if (room.isBotGame()) {
+                        p.switchToMenuState();
+                    } else {
+                        p.switchToRoomState();
+                    }
                 }
             }
 
@@ -50,6 +72,17 @@ public class InGameState implements ClientHandlerState {
                     }
                 }
             } 
+
+            if (result.code == MoveCode.GAME_OVER || result.code == MoveCode.SURRENDER) {
+                for (ClientHandler p : currentRoom.getPlayers()) {
+                    if (room.isBotGame()) {
+                        p.switchToMenuState();
+                    } else {
+                        p.switchToRoomState();
+                    }
+                }
+            }
+
             game.setLastMoveResult(null);
         }
     }

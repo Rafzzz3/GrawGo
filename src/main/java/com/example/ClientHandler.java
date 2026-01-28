@@ -158,6 +158,9 @@ public class ClientHandler implements Runnable {
     public Stone getPlayerColor() {
         return this.playerColor;
     }
+    public RoomManager getRoomManager() {
+        return roomManager;
+    }
     public void switchToLobbyState() {
         this.currentState = this.lobbyState;
     }

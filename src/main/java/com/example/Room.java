@@ -42,6 +42,10 @@ public class Room {
     */
     private final Random random = new Random();
     private GameService gameService;
+
+    private boolean isBotGame = false;
+    private Stone botColor;
+
     /**
      * Konstruktor klasy Room.
      * @param id Identyfikator pokoju.
@@ -65,9 +69,15 @@ public class Room {
             if (blackFirst) {
                 player.setPlayerColor(Stone.BLACK);
                 firstSeatColor = Stone.BLACK;
+                if (isBotGame) {
+                    botColor = Stone.WHITE;
+                }
             } else {
                 player.setPlayerColor(Stone.WHITE);
                 firstSeatColor = Stone.WHITE;
+                if (isBotGame) {
+                    botColor = Stone.BLACK;
+                }
             }
         } else {
             // drugi gracz dostaje przeciwny kolor
@@ -97,6 +107,15 @@ public class Room {
     */
     public int getId() {
         return id;
+    }
+    public boolean isBotGame() {
+        return isBotGame;
+    }
+    public void setBotGame(boolean botGame) {
+        this.isBotGame = botGame;
+    }
+    public Stone getBotColor() {
+        return botColor;
     }
     /** 
      * Zwraca liczbę graczy w pokoju.

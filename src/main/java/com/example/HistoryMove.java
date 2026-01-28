@@ -7,7 +7,7 @@ public class HistoryMove implements Serializable {
     public int x;
     public int y;
     public Stone playerColor;
-    public MoveResult result;
+    public int[][] captured;
 
     public HistoryMove() {}
 
@@ -15,6 +15,6 @@ public class HistoryMove implements Serializable {
         this.x = x;
         this.y = y;
         this.playerColor = playerColor;
-        this.result = result;
+        this.captured = result.captured;
     }
 }

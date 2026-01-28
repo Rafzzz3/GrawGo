@@ -56,11 +56,7 @@ public class InGameState implements ClientHandlerState {
                     if (p != player) { 
                         p.getServerSender().sendObject(result);
                     }
-                    if (room.isBotGame()) {
-                        p.switchToMenuState();
-                    } else {
-                        p.switchToRoomState();
-                    }
+                    p.switchToRoomState();
                 }
             }
 
@@ -72,16 +68,6 @@ public class InGameState implements ClientHandlerState {
                     }
                 }
             } 
-
-            if (result.code == MoveCode.GAME_OVER || result.code == MoveCode.SURRENDER) {
-                for (ClientHandler p : currentRoom.getPlayers()) {
-                    if (room.isBotGame()) {
-                        p.switchToMenuState();
-                    } else {
-                        p.switchToRoomState();
-                    }
-                }
-            }
 
             game.setLastMoveResult(null);
         }

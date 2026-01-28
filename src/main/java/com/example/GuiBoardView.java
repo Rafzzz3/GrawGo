@@ -119,6 +119,10 @@ public class GuiBoardView {
             this.waitingForDelta = false;
             this.lastActionWasUndo = false;
 
+            if (currentViewIndex > headIndex) {
+                 currentViewIndex = headIndex;
+            }
+
             drawingPanel.updateBoard(board);
         });
     }
@@ -145,6 +149,9 @@ public class GuiBoardView {
 
             } else {
                 // redo
+                if (currentViewIndex >= headIndex) {
+                     return;
+                }
                 currentBoard.setStone(move.x, move.y, move.playerColor);
                 removeCaptives(move);
                 
@@ -157,7 +164,7 @@ public class GuiBoardView {
     }
 
     private void restoreCaptives(HistoryMove move) {
-        if (move.result.captured == null || move.result.captured.length == 0) return;
+        if (move.captured == null || move.captured.length == 0) return;
 
         Stone deadColor;
         if (move.playerColor == Stone.BLACK) {
@@ -166,19 +173,19 @@ public class GuiBoardView {
             deadColor = Stone.BLACK;
         }
 
-        for (int[] pos : move.result.captured) {
-            int realX = pos[0] - 1;
-            int realY = pos[1] - 1;
+        for (int[] pos : move.captured) {
+            int realX = pos[0];
+            int realY = pos[1];
             currentBoard.setStone(realX, realY, deadColor);
         }
     }
 
     private void removeCaptives(HistoryMove move) {
-        if (move.result.captured == null || move.result.captured.length == 0) return;
+        if (move.captured == null || move.captured.length == 0) return;
 
-        for (int[] pos : move.result.captured) {
-            int realX = pos[0] - 1;
-            int realY = pos[1] - 1;
+        for (int[] pos : move.captured) {
+            int realX = pos[0];
+            int realY = pos[1];
             currentBoard.setStone(realX, realY, Stone.EMPTY);
         }
     }

@@ -79,7 +79,7 @@ public class GameLogic {
             StringBuilder sb = new StringBuilder("Uduszono: ");
             for (int i = 0; i < captured.length; i++) {
                 int[] p = captured[i];
-                sb.append("(").append(p[0]).append(", ").append(p[1]).append(")");
+                sb.append("(").append(p[0]+1).append(", ").append(p[1]+1).append(")");
                 if (i < captured.length - 1) sb.append(", ");
             }
             msg = sb.toString();
@@ -117,7 +117,7 @@ public class GameLogic {
                     if (suffocatedList.size() > 0) {
                         for (int[] pos : suffocatedList) {
                             board.setStone(pos[0], pos[1], Stone.EMPTY);
-                            capturedList.add(new int[]{pos[0]+1, pos[1]+1}); // +1 dla uzytkownika
+                            capturedList.add(new int[]{pos[0], pos[1]});
                         }
 
                         if (color == Stone.BLACK) {

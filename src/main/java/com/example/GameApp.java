@@ -156,6 +156,9 @@ public class GameApp extends Application implements GuiListner {
     @Override
     public void forExitRoom() {
         Platform.runLater(() -> {
+            if (boardView != null) {
+                boardView.reset();
+            }
             gameStarted = false;
             mainStage.setScene(mainMenuView.getScene());
             mainStage.setTitle("Gra Go - Lobby");

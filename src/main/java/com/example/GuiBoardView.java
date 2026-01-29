@@ -41,11 +41,15 @@ public class GuiBoardView {
      */
     private Button passButton;
     private Button surrenderButton;
+    private Button returnButton;
     public GuiBoardView(SocketClient socketClient) {
         this.socketClient = socketClient;
         BorderPane layout = new BorderPane();
         passButton = new Button("Pass");
         surrenderButton = new Button("Surrender");
+        returnButton = new Button("Return to menu");
+        returnButton.setVisible(false);
+        returnButton.setManaged(false);
         Button prevButton = new Button("<-");
         Button nextButton = new Button("->");
         drawingPanel = new GoDrawingPanel();
@@ -54,7 +58,7 @@ public class GuiBoardView {
         surrenderButton.setOnAction(e -> surrenderGame());
         prevButton.setOnAction(e -> requestPrev());
         nextButton.setOnAction(e -> requestNext());
-
+        returnButton.setOnAction(e -> returnToMenu());
         drawingPanel.setOnMoveListener(command -> {
             if (analysisMode) {
                 return;
@@ -67,8 +71,9 @@ public class GuiBoardView {
         layout.setLeft(passButton);
         layout.setRight(surrenderButton);
         layout.setCenter(drawingPanel);
+        layout.setTop(returnButton);
 
-        HBox historyBox = new HBox(10, prevButton, nextButton);
+        HBox historyBox = new HBox(10, prevButton, nextButton,returnButton);
         historyBox.setAlignment(Pos.CENTER);
         layout.setBottom(historyBox);
 
@@ -214,6 +219,8 @@ public class GuiBoardView {
     public void reset() {
         this.currentViewIndex = -1;
         this.headIndex = -1;
+        returnButton.setVisible(false);
+        returnButton.setManaged(false);
         this.waitingForDelta = false;
         this.lastActionWasUndo = false;
         this.currentBoard = null;
@@ -278,8 +285,13 @@ public class GuiBoardView {
         this.totalMoves = totalMoves;
         passButton.setVisible(!isActive);
         surrenderButton.setVisible(!isActive);
-
+        returnButton.setVisible(isActive);
         this.currentViewIndex = -1;
         this.headIndex = totalMoves - 1;
+    }
+    public void returnToMenu() {
+        if (analysisMode) {
+            socketClient.getClientSender().sendToGui("EXIT_ANALYZE");
+        }
     }
 }

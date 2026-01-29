@@ -75,6 +75,11 @@ public class ClientReceiver implements Runnable {
                             listener.forEnterAnalyze();
                         }
                     }
+                    else if (message.startsWith("EXIT_ANALYZE")) {
+                        if (listener != null) {
+                            listener.forExitAnalyze();
+                        }
+                    }
                     else if (message.startsWith("LOAD_GAME")) {
                         String[] parts = message.split(" ");
                         int size = Integer.parseInt(parts[1]);

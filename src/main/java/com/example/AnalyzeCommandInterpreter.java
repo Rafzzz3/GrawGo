@@ -14,6 +14,7 @@ public class AnalyzeCommandInterpreter {
     public AnalyzeCommandInterpreter(GameService gameService) {
         this.gameService = gameService;
         commandList.put("ANALYZEGAME", new AnalyzeCommandANALYZEGAME(gameService));
+        commandList.put("EXIT_ANALYZE", new AnalyzeCommandANALYZEEXIT());
     }
     public void interpret(ClientHandler player, String message) {
         String[] commandsMessage = message.trim().split(" ", 2);

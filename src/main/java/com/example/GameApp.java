@@ -204,6 +204,9 @@ public class GameApp extends Application implements GuiListner {
     public void forExitAnalyze() {
         Platform.runLater(() -> {
             inAnalyzeMode = false;
+            if (boardView != null) {
+                boardView.reset();
+            }
             mainStage.setScene(mainMenuView.getScene());
             mainStage.setTitle("Main Menu");
         });

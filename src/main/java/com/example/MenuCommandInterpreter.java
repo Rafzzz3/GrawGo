@@ -7,6 +7,8 @@ package com.example;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.example.database.GameService;
+
 /**
  * Klasa interpretująca polecenia związane z pokojami gry.
  */
@@ -21,10 +23,10 @@ public class MenuCommandInterpreter {
      * @param roomManager Menedżer pokoi gry.
      * @param player Obiekt obsługujący klienta.
      */
-    public MenuCommandInterpreter() {
+    public MenuCommandInterpreter(GameService gameService) {
         commands.put("PVP", new MenuCommandPVP());
         commands.put("PVE", new MenuCommandPVE());
-        commands.put("ANALYZE", new MenuCommandANALYZE());
+        commands.put("ANALYZE", new MenuCommandANALYZE(gameService));
     }
 
     /**

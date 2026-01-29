@@ -22,6 +22,7 @@ public class GameCommandInterpreter {
         commandList.put("PASS", new GameCommandPASS());
         commandList.put("SURRENDER", new GameCommandSURRENDER());
         commandList.put("FETCH_DELTA", new GameCommandFETCHDATA());
+        commandList.put("LEAVE", new GameCommandLEAVE());
     }
 
     /** 

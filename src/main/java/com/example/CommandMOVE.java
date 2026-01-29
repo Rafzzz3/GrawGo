@@ -17,6 +17,16 @@ public class CommandMOVE implements CommandInterfaceExecutor {
     */
     @Override
     public void execute(Game game, String args, ClientHandler player) {
+        if (!game.isTurn(player.getPlayerColor())) {
+            MoveResult notTurnResult = new MoveResult(
+                MoveCode.NOT_YOUR_TURN, 
+                new int[0][], 
+            "Nie twoja tura. Czekaj na ruch przeciwnika."
+            );
+            player.getServerSender().sendObject(notTurnResult);
+            return;
+        }
+
         String[] parts = args.trim().split("\\s+");
         if (parts.length != 2) {
             game.setMessage("Nieprawidłowa liczba argumentów dla komendy MOVE.");

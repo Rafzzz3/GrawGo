@@ -241,6 +241,11 @@ public class Game {
         this.consecutivePasses = 0;
     }
 
+    public void setHistory(List<HistoryMove> history) {
+        this.matchHistory.clear();
+        this.matchHistory.addAll(history);
+    }
+
     // Plansza Go w Unicode: ● (czarny), ○ (biały), linie ┌┬┐ ├┼┤ └┴┘
     // public String renderBoard() {
     //     Board board = getBoard();

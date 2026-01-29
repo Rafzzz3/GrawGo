@@ -4,6 +4,7 @@ public class InRoomState implements ClientHandlerState {
     private RoomCommandInterpreter roomCommandInterpreter;
     private RoomManager roomManager;
     public InRoomState(ClientHandler player, RoomManager roomManager) {
+        this.roomManager = roomManager;
         this.roomCommandInterpreter = new RoomCommandInterpreter(roomManager, player);
     }
     @Override

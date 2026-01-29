@@ -13,19 +13,7 @@ public class InGameState implements ClientHandlerState {
     public void handleMessage(ClientHandler player, String message) {
         room = player.getCurrentRoom();
         game = room.getGame();
-        if (message.startsWith("FETCH")) {
-            gameCommandInterpreter.interpret(game,message,player);
-            return;
-        }
-        if (!game.isTurn(player.getPlayerColor())) {
-            MoveResult notTurnResult = new MoveResult(
-                MoveCode.NOT_YOUR_TURN, 
-                new int[0][], 
-            "Nie twoja tura. Czekaj na ruch przeciwnika."
-            );
-            player.getServerSender().sendObject(notTurnResult);
-            return;
-        }
+
         gameCommandInterpreter.interpret(game, message, player);
         handleMoveResult(player, game, room);
 
@@ -33,7 +21,6 @@ public class InGameState implements ClientHandlerState {
             if (game.getLastMoveResult() != null && game.getLastMoveResult().code == MoveCode.GAME_OVER) {
                 return;
             }
-
             try {
                 Thread.sleep(1000);     // opoznienie dla bota
             } catch (InterruptedException e) {

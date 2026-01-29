@@ -157,9 +157,8 @@ public class GameApp extends Application implements GuiListner {
     public void forExitRoom() {
         Platform.runLater(() -> {
             gameStarted = false;
-            mainStage.setScene(lobbyView.getScene());
+            mainStage.setScene(mainMenuView.getScene());
             mainStage.setTitle("Gra Go - Lobby");
-            lobbyView.refreshRoomList();
             boardView.reset();
         });
     }
@@ -174,7 +173,7 @@ public class GameApp extends Application implements GuiListner {
     @Override
     public void forHistoryMove(HistoryMove move) {
         Platform.runLater(() -> {
-            if (gameStarted && boardView != null) {
+            if ((gameStarted || inAnalyzeMode) && boardView != null) {
                 boardView.handleHistoryDelta(move);
             }
         });
@@ -185,6 +184,28 @@ public class GameApp extends Application implements GuiListner {
             inAnalyzeMode = true;
             mainStage.setScene(analyzeView.getScene());
             mainStage.setTitle("Archiwum rozegranych gier");
+        });
+    }
+    @Override
+    public void forLoadGame(int size, int totalMoves) {
+        Platform.runLater(() -> {
+            boardView.reset(); 
+            
+            Board emptyBoard = new Board(size);
+            boardView.updateBoard(emptyBoard);
+            
+            boardView.setAnalysisMode(true, totalMoves);
+
+            mainStage.setScene(boardView.getScene());
+            mainStage.setTitle("Analiza Gry");
+        });
+    }
+    @Override
+    public void forExitAnalyze() {
+        Platform.runLater(() -> {
+            inAnalyzeMode = false;
+            mainStage.setScene(mainMenuView.getScene());
+            mainStage.setTitle("Main Menu");
         });
     }
 }

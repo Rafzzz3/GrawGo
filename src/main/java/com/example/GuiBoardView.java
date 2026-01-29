@@ -20,8 +20,9 @@ public class GuiBoardView {
     private int headIndex = -1; // Najnowszy ruch w historii
     private boolean waitingForDelta = false;
     private boolean lastActionWasUndo = false;
+    private boolean analysisMode = false;
+    private int totalMoves;
     private Board currentBoard;
-
     /**
      * @param scene Obiekt Scene reprezentujący scenę GUI planszy gry.
      */
@@ -38,11 +39,13 @@ public class GuiBoardView {
      * Konstruktor klasy GuiBoardView.
      * @param socketClient Obiekt SocketClient do komunikacji z serwerem.
      */
+    private Button passButton;
+    private Button surrenderButton;
     public GuiBoardView(SocketClient socketClient) {
         this.socketClient = socketClient;
         BorderPane layout = new BorderPane();
-        Button passButton = new Button("Pass");
-        Button surrenderButton = new Button("Surrender");
+        passButton = new Button("Pass");
+        surrenderButton = new Button("Surrender");
         Button prevButton = new Button("<-");
         Button nextButton = new Button("->");
         drawingPanel = new GoDrawingPanel();
@@ -53,7 +56,9 @@ public class GuiBoardView {
         nextButton.setOnAction(e -> requestNext());
 
         drawingPanel.setOnMoveListener(command -> {
-            // Blokada stawiania kamieni w przeszłości
+            if (analysisMode) {
+                return;
+            }
             if (currentViewIndex != headIndex) { 
                  return;
             }
@@ -72,19 +77,27 @@ public class GuiBoardView {
 
     private void requestPrev() {
         if (!waitingForDelta) {
-            if (currentViewIndex <= 0) return;
-
+            if (currentViewIndex < 0)  {
+                return;
+            }
             waitingForDelta = true;
             lastActionWasUndo = true;
-            socketClient.getClientSender().sendToGui("FETCH_DELTA " + (currentViewIndex - 1));
+            socketClient.getClientSender().sendToGui("FETCH_DELTA " + currentViewIndex);
         }
     }
 
     private void requestNext() {
-        if (!waitingForDelta && currentViewIndex < headIndex) {
+        int limit;
+        if (analysisMode) {
+            limit = totalMoves - 1;
+        }
+        else {
+            limit = headIndex;
+        }
+        if (!waitingForDelta && currentViewIndex < limit) {
             waitingForDelta = true;
             lastActionWasUndo = false;
-            socketClient.getClientSender().sendToGui("FETCH_DELTA " + currentViewIndex);
+            socketClient.getClientSender().sendToGui("FETCH_DELTA " + (currentViewIndex+1));
         }
     }
     /**
@@ -113,13 +126,15 @@ public class GuiBoardView {
     public void updateBoard(Board board) {
         Platform.runLater(() -> {
             this.currentBoard = board;
-            this.headIndex++;
-            this.currentViewIndex = this.headIndex;
+            if (!analysisMode) {
+                this.headIndex++;
+                this.currentViewIndex = this.headIndex;
+            }
             
             this.waitingForDelta = false;
             this.lastActionWasUndo = false;
 
-            if (currentViewIndex > headIndex) {
+            if (!analysisMode && currentViewIndex > headIndex) {
                  currentViewIndex = headIndex;
             }
 
@@ -139,7 +154,9 @@ public class GuiBoardView {
                 return;
             }
             
-            if (currentBoard == null) return; 
+            if (currentBoard == null) {
+                return; 
+            }
 
             if (lastActionWasUndo) {
                 currentBoard.setStone(move.x, move.y, Stone.EMPTY);
@@ -200,6 +217,7 @@ public class GuiBoardView {
         this.waitingForDelta = false;
         this.lastActionWasUndo = false;
         this.currentBoard = null;
+        this.analysisMode = false;
     }
 
 
@@ -254,5 +272,14 @@ public class GuiBoardView {
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+    public void setAnalysisMode(boolean isActive, int totalMoves) {
+        this.analysisMode = isActive;
+        this.totalMoves = totalMoves;
+        passButton.setVisible(!isActive);
+        surrenderButton.setVisible(!isActive);
+
+        this.currentViewIndex = -1;
+        this.headIndex = totalMoves - 1;
     }
 }

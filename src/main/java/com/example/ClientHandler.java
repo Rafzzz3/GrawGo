@@ -62,6 +62,7 @@ public class ClientHandler implements Runnable {
     private final ClientHandlerState roomState;
     private final ClientHandlerState gameState;
     private final ClientHandlerState analyzeState;
+    private Game analyzedGame; 
     private GameService gameService;
     /**
      * Konstruktor klasy ClientHandler.
@@ -76,8 +77,8 @@ public class ClientHandler implements Runnable {
         this.lobbyState = new InLobbyState(roomManager, this);
         this.roomState = new InRoomState(this, roomManager);
         this.gameState = new InGameState();
-        this.analyzeState = new InAnalyzeState();
-        this.menuState = new InMenuState(roomManager);
+        this.analyzeState = new InAnalyzeState(gameService);
+        this.menuState = new InMenuState(roomManager, gameService);
 
         this.currentState = menuState;
     }
@@ -175,5 +176,11 @@ public class ClientHandler implements Runnable {
     }
     public void switchToMenuState() {
         this.currentState = this.menuState;
+    }
+    public void setAnalyzedGame(Game game) {
+        this.analyzedGame = game;
+    }
+    public Game getAnalyzedGame() {
+        return this.analyzedGame;
     }
 }

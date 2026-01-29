@@ -1,5 +1,5 @@
 package com.example.database;
-
+import com.example.Game;
 import com.example.HistoryMove;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,5 +24,8 @@ public class GameService {
 
     public List<GameDocument> getAllGames() {
         return repository.findAllByOrderByPlayedAtDesc();
+    }
+    public GameDocument getGame(String id) {
+        return repository.findById(id).orElse(null);
     }
 }
